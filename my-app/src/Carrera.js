@@ -1,4 +1,4 @@
-import './dist/Carrera.scss';
+import styles from './dist/Carrera.module.scss';
 import React from 'react';
 import { useParams } from 'react-router-dom';
 import { Container } from '@mui/material';
@@ -23,16 +23,16 @@ function Carrera() {
     }, [])
 
     return (
-        <div className='Body'>
-            <div className='TopBar'>
-                <Container className='TopBarContainer'>
-                    <div className='Left'>left</div>
-                    <div className='Right'>right</div>
+        <div className={styles.Body}>
+            <div className={styles.TopBar}>
+                <Container className={styles.TopBarContainer}>
+                    <div className={styles.Left}>left</div>
+                    <div className={styles.Right}>right</div>
                 </Container>
             </div>
             <Container maxWidth='lg'>
-                <div className='Main'>
-                    <div className='Table'></div>
+                <div className={styles.Main}>
+                    <div className={styles.Table}></div>
                 </div>
             </Container>
         </div>

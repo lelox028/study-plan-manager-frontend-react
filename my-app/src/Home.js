@@ -1,4 +1,4 @@
-import './dist/Home.scss';
+import styles from './dist/Home.module.scss';
 import { Container } from '@mui/material';
 import React from 'react'
 import axios from 'axios';
@@ -55,45 +55,45 @@ function Home() {
     }, [activeFacu])
 
     return (
-        <div className='Body'>
-            <div className='TopBar'>
-                <Container className='TopBarContainer'>
-                    <div className='Left'>left</div>
-                    <div className='Right'>right</div>
+        <div className={styles.Body}>
+            <div className={styles.TopBar}>
+                <Container className={styles.TopBarContainer}>
+                    <div className={styles.Left}>left</div>
+                    <div className={styles.Right}>right</div>
                 </Container>
             </div>
             <Container maxWidth='lg'>
-                <div className='Main'>
-                    <div className='Title'>
+                <div className={styles.Main}>
+                    <div className={styles.Title}>
                         <h1>Study Plan Manager v0.0.1</h1>
                     </div>
-                    <div className='Description'>
+                    <div className={styles.Description}>
                         <p>Bienvenido a la primer iteracion de este proyecto, aqui es donde todo comienza!</p>
                         <p>PD: si, esta feo, y va a seguir feo durante un buen rato, hasta el dia en que subitamente aflore en mi una nueva pasion por el desarrollo front-end y/o UX/UI, hasta entonces, <b>it is what it is.</b></p>
                     </div>
-                    <div className='Data'>
-                        <div className='DataHeader'>
+                    <div className={styles.Data}>
+                        <div className={styles.DataHeader}>
                             <p>Para empezar, selecciona una de tus universidades:</p>
                         </div>
-                        <div className='DataBody'>
-                            {(universidades||[]).map((universidad) => (
-                                <div className='Universidad' onClick={() => setActiveUni(universidad)}>
-                                    <div className='UniversidadHeader'>
+                        <div className={styles.DataBody}>
+                            {(universidades || []).map((universidad) => (
+                                <div className={styles.Universidad} onClick={() => setActiveUni(universidad)}>
+                                    <div className={styles.UniversidadHeader}>
                                         <div>{universidad.id_Universidad === activeUni.id_Universidad ? <FaFolderOpen /> : <FaFolder />}</div>
                                         <div><p>{universidad.nombre_Universidad}</p></div>
                                     </div>
-                                    <div className={(universidad.id_Universidad === activeUni.id_Universidad) ? 'Facultades' : 'Inactive'}>
-                                        {(facultades||[]).map((facultad) => (
-                                            <div className='Facultad' onClick={() => setActiveFacu(facultad)}>
-                                                <div className='FacultadHeader'>
+                                    <div className={(universidad.id_Universidad === activeUni.id_Universidad) ? styles.Facultades : styles.Inactive}>
+                                        {(facultades || []).map((facultad) => (
+                                            <div className={styles.Facultad} onClick={() => setActiveFacu(facultad)}>
+                                                <div className={styles.FacultadHeader}>
                                                     <div>{facultad.id_F === activeFacu.id_F ? <FaFolderOpen /> : <FaFolder />}</div>
                                                     <div><p>{facultad.nombreF}</p></div>
                                                 </div>
-                                                <div className={(facultad.id_F === activeFacu.id_F)?'Carreras':'Inactive'}>
+                                                <div className={(facultad.id_F === activeFacu.id_F) ? styles.Carreras : styles.Inactive}>
                                                     <ul>
-                                                        {(carreras||[]).map((carrera)=>(
-                                                            <div className='Carrera'>
-                                                                <li key={carrera.id_C}><a href={'/carrera/'+carrera.id_C}>{carrera.nombreC}</a></li>
+                                                        {(carreras || []).map((carrera) => (
+                                                            <div className={styles.Carrera}>
+                                                                <li key={carrera.id_C}><a href={'/carrera/' + carrera.id_C}>{carrera.nombreC}</a></li>
                                                             </div>
                                                         ))}
                                                     </ul>
