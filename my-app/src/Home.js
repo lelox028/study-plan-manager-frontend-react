@@ -7,7 +7,12 @@ import { FaFolder, FaFolderOpen } from "react-icons/fa";
 function Home() {
     //logic
     const [universidades, setUniversidades] = React.useState([]);
+    const [activeUni, setActiveUni] = React.useState([]);
+    const [facultades, setFacultades] = React.useState([]);
+    const [activeFacu, setActiveFacu] = React.useState([]);
+    const [carreras, setCarreras] = React.useState([]);
 
+    // Load Universidades
     React.useEffect(() => {
         axios.get('http://localhost:8080/universidades')
             .then(response => {
@@ -19,9 +24,7 @@ function Home() {
             });
     }, []);
 
-    const [activeUni, setActiveUni] = React.useState([]);
-    const [facultades, setFacultades] = React.useState([]);
-
+    // Load facultades from Active Universidad
     React.useEffect(() => {
         console.log("Active Uni is ", activeUni)
         if (activeUni.id_Universidad) {
@@ -35,6 +38,21 @@ function Home() {
                 });
         }
     }, [activeUni])
+
+    // Load carreras from Active Facultad
+    React.useEffect(() => {
+        console.log("Active facu is ", activeFacu)
+        if (activeFacu.id_F) {
+            axios.get('http://localhost:8080/carreras/facultades/' + activeFacu.id_F + '/carreras')
+                .then(response => {
+                    console.log("Datos carreras recibidos: ", response.data); // Axios ya tiene los datos en 'response.data'
+                    setCarreras(response.data);
+                })
+                .catch(error => {
+                    console.error('Error al obtener las facultades:', error);
+                });
+        }
+    }, [activeFacu])
 
     return (
         <div className='Body'>
@@ -65,16 +83,24 @@ function Home() {
                                         <div><p>{universidad.nombre_Universidad}</p></div>
                                     </div>
                                     <div className={(universidad.id_Universidad === activeUni.id_Universidad) ? 'Facultades' : 'Inactive'}>
-                                        <ul>
-                                            {facultades.map((facultad) => (
-                                                <div className='Facultad'>
-                                                    <li>
-                                                        <p>{facultad.nombreF}</p>
-                                                    </li>
+                                        {facultades.map((facultad) => (
+                                            <div className='Facultad' onClick={() => setActiveFacu(facultad)}>
+                                                <div className='FacultadHeader'>
+                                                    <div>{facultad.id_F === activeFacu.id_F ? <FaFolderOpen /> : <FaFolder />}</div>
+                                                    <div><p>{facultad.nombreF}</p></div>
                                                 </div>
-                                            )
-                                            )}
-                                        </ul>
+                                                <div className={(facultad.id_F === activeFacu.id_F)?'Carreras':'Inactive'}>
+                                                    <ul>
+                                                        {(carreras||[]).map((carrera)=>(
+                                                            <div className='Carrera'>
+                                                                <li key={carrera.id_C}><a href='/carrera'>{carrera.nombreC}</a></li>
+                                                            </div>
+                                                        ))}
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        )
+                                        )}
                                     </div>
                                 </div>
                             ))}
