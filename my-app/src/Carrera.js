@@ -4,13 +4,16 @@ import { useParams } from 'react-router-dom';
 import { Container } from '@mui/material';
 import axios from 'axios';
 // import stuff for tables
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import Paper from '@mui/material/Paper';
+import {
+    TableContainer,
+    Table,
+    TableHead,
+    TableRow,
+    TableCell,
+    TableBody,
+    Paper,
+    Typography,
+  } from '@mui/material';
 
 
 function Carrera() {
@@ -31,14 +34,14 @@ function Carrera() {
                 console.error('Error al obtener la carrera:', error);
             });
         // get all materias for this carrera
-        axios.get('http://localhost:8080/materias/carreras/'+slug+'/materias')
-        .then(response => {
-            console.log("Datos materias recibidos: ", response.data);
-            setThisCarrera(response.data);
-        })
-        .catch(error => {
-            console.error('Error al obtener las materias:', error);
-        });
+        axios.get('http://localhost:8080/materias/carreras/' + slug + '/materias')
+            .then(response => {
+                console.log("Datos materias recibidos: ", response.data);
+                setMaterias(response.data);
+            })
+            .catch(error => {
+                console.error('Error al obtener las materias:', error);
+            });
     }, [])
 
 
@@ -72,29 +75,48 @@ function Carrera() {
                     <div className={styles.Table}>
                         {/* here goes a table */}
                         <TableContainer component={Paper}>
-                            <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                            <Table sx={{ minWidth: 650 }} aria-label="materias table">
                                 <TableHead>
                                     <TableRow>
-                                        <TableCell>Dessert (100g serving)</TableCell>
-                                        <TableCell align="right">Calories</TableCell>
-                                        <TableCell align="right">Fat&nbsp;(g)</TableCell>
-                                        <TableCell align="right">Carbs&nbsp;(g)</TableCell>
-                                        <TableCell align="right">Protein&nbsp;(g)</TableCell>
+                                        <TableCell>Materia</TableCell>
+                                        <TableCell align="right">Año</TableCell>
+                                        <TableCell align="right">Cuatrimestre</TableCell>
+                                        <TableCell align="right">Estado</TableCell>
+                                        <TableCell align="right">Fecha de Aprobación</TableCell>
+                                        <TableCell align="right">Calificación</TableCell>
+                                        <TableCell align="right">Carrera</TableCell>
+                                        <TableCell align="right">Correlativas</TableCell>
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
-                                    {rows.map((row) => (
-                                        <TableRow
-                                            key={row.name}
-                                            sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                                        >
+                                    {materias.map((materia) => (
+                                        <TableRow key={materia.idMateria}>
                                             <TableCell component="th" scope="row">
-                                                {row.name}
+                                                {materia.nombreMateria}
                                             </TableCell>
-                                            <TableCell align="right">{row.calories}</TableCell>
-                                            <TableCell align="right">{row.fat}</TableCell>
-                                            <TableCell align="right">{row.carbs}</TableCell>
-                                            <TableCell align="right">{row.protein}</TableCell>
+                                            <TableCell align="right">{materia.anio}</TableCell>
+                                            <TableCell align="right">{materia.cuatrimestre}</TableCell>
+                                            <TableCell align="right">{materia.estado}</TableCell>
+                                            <TableCell align="right">
+                                                {materia.fechaAprobacion ? materia.fechaAprobacion : "N/A"}
+                                            </TableCell>
+                                            <TableCell align="right">
+                                                {materia.calificacion !== null ? materia.calificacion : "N/A"}
+                                            </TableCell>
+                                            <TableCell align="right">
+                                                {materia.carrera.nombreC}
+                                            </TableCell>
+                                            <TableCell align="right">
+                                                {materia.correlativas.length > 0 ? (
+                                                    materia.correlativas.map((corr) => (
+                                                        <Typography key={corr.idMateria}>
+                                                            {corr.nombreMateria}
+                                                        </Typography>
+                                                    ))
+                                                ) : (
+                                                    "Ninguna"
+                                                )}
+                                            </TableCell>
                                         </TableRow>
                                     ))}
                                 </TableBody>
