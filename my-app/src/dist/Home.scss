@@ -51,5 +51,52 @@ $color4: #4A628A;
             padding: 20px;
             border-radius: 20px;
         }
+
+        .Data {
+            background-color: $color2;
+            border-radius: 20px;
+            padding: 20px;
+
+            .DataHeader {}
+
+            .DataBody {
+                .Universidad {
+                    .UniversidadHeader {
+                        display: flex;
+
+                        >div {
+                            margin: auto 10px auto 0;
+
+                            >p {
+                                color: blue;
+                                text-decoration: underline;
+                                cursor: pointer;
+                                margin: 8px;
+                            }
+                        }
+                    }
+
+                    .Facultades {
+                        // background-color: $color3;
+                        max-width: fit-content;
+                        margin-left: 20px;
+
+                        ul {
+                            margin: 0;
+                        }
+
+                        .Facultad {
+                            li p {
+                                margin: auto 10px;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    .Inactive {
+        display: none;
     }
 }
