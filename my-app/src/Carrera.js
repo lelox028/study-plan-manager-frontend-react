@@ -18,8 +18,10 @@ function Carrera() {
     const { slug } = useParams();
 
     const [thisCarrera, setThisCarrera] = React.useState([]);
+    const [materias, setMaterias] = React.useState([]);
 
     React.useEffect(() => {
+        // get Carrera Data
         axios.get('http://localhost:8080/carreras/' + slug)
             .then(response => {
                 console.log("Datos carrera recibidos: ", response.data);
@@ -28,7 +30,18 @@ function Carrera() {
             .catch(error => {
                 console.error('Error al obtener la carrera:', error);
             });
+        // get all materias for this carrera
+        axios.get('http://localhost:8080/materias/carreras/'+slug+'/materias')
+        .then(response => {
+            console.log("Datos materias recibidos: ", response.data);
+            setThisCarrera(response.data);
+        })
+        .catch(error => {
+            console.error('Error al obtener las materias:', error);
+        });
     }, [])
+
+
 
     //table logic
     function createData(name, calories, fat, carbs, protein) {
