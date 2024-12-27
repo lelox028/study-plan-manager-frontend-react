@@ -32,7 +32,10 @@ function Carrera() {
             </div>
             <Container maxWidth='lg'>
                 <div className={styles.Main}>
-                    <div className={styles.Table}></div>
+                    <div className={styles.MainHeader}>
+                        <h2>{thisCarrera.nombreC}</h2>
+                    </div>
+                    <div className={styles.Table}>aa</div>
                 </div>
             </Container>
         </div>
