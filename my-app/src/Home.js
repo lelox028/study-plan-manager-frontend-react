@@ -76,14 +76,14 @@ function Home() {
                             <p>Para empezar, selecciona una de tus universidades:</p>
                         </div>
                         <div className='DataBody'>
-                            {universidades.map((universidad) => (
+                            {(universidades||[]).map((universidad) => (
                                 <div className='Universidad' onClick={() => setActiveUni(universidad)}>
                                     <div className='UniversidadHeader'>
                                         <div>{universidad.id_Universidad === activeUni.id_Universidad ? <FaFolderOpen /> : <FaFolder />}</div>
                                         <div><p>{universidad.nombre_Universidad}</p></div>
                                     </div>
                                     <div className={(universidad.id_Universidad === activeUni.id_Universidad) ? 'Facultades' : 'Inactive'}>
-                                        {facultades.map((facultad) => (
+                                        {(facultades||[]).map((facultad) => (
                                             <div className='Facultad' onClick={() => setActiveFacu(facultad)}>
                                                 <div className='FacultadHeader'>
                                                     <div>{facultad.id_F === activeFacu.id_F ? <FaFolderOpen /> : <FaFolder />}</div>
