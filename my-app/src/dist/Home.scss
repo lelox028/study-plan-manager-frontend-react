@@ -1,0 +1,55 @@
+$background: #fff;
+$background2: #d5c4a1;
+$background4: #a89984;
+$foreground: #000;
+
+.Body {
+    background-color: $background2;
+    height: 100%;
+    width: 100%;
+    left: 0;
+    top: 0;
+    overflow: auto;
+    position: fixed;
+
+    .TopBar {
+        background-color: $background4;
+        width: 100%;
+        height: 6em;
+
+        .TopBarContainer {
+            display: flex;
+            justify-content: space-between;
+            height: inherit;
+
+            .Left {
+                margin: auto 3em;
+            }
+
+            .Right {
+                display: flex;
+                margin: auto 3em;
+                justify-content: space-between;
+            }
+        }
+    }
+
+    .Main {
+
+        .Title {
+            text-align: center;
+            max-width: fit-content;
+            margin: 6em auto;
+
+        }
+
+        .Description {
+            max-width: 800px;
+            margin: auto;
+            text-align: center;
+            background-color: $background4;
+            padding: 20px;
+            border-radius: 20px;
+        }
+    }
+}
