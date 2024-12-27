@@ -93,7 +93,7 @@ function Home() {
                                                     <ul>
                                                         {(carreras||[]).map((carrera)=>(
                                                             <div className='Carrera'>
-                                                                <li key={carrera.id_C}><a href='/carrera'>{carrera.nombreC}</a></li>
+                                                                <li key={carrera.id_C}><a href={'/carrera/'+carrera.id_C}>{carrera.nombreC}</a></li>
                                                             </div>
                                                         ))}
                                                     </ul>
