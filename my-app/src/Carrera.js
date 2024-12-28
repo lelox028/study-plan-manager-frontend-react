@@ -1,63 +1,109 @@
-import styles from './dist/carrera.module.scss';
-import React from 'react';
-import { useParams } from 'react-router-dom';
-import { Container } from '@mui/material';
-import axios from 'axios';
-// import stuff for tables
-import {
-    TableContainer,
-    Table,
-    TableHead,
-    TableRow,
-    TableCell,
-    TableBody,
-    Paper,
-    Typography,
-  } from '@mui/material';
+import styles from "./dist/carrera.module.scss";
+import React from "react";
+import { useParams } from "react-router-dom";
+import { Container } from "@mui/material";
+import axios from "axios";
+import { Popover } from "@mui/material";
+import Button from "@mui/material/Button";
+import { Icon } from "@iconify/react";
 
 
 function Carrera() {
-
     const { slug } = useParams();
 
     const [thisCarrera, setThisCarrera] = React.useState([]);
     const [materias, setMaterias] = React.useState([]);
+    const [materiasAprobadas, setMateriasAprobadas] = React.useState([]);
 
     React.useEffect(() => {
         // get Carrera Data
-        axios.get('http://localhost:8080/carreras/' + slug)
-            .then(response => {
+        axios
+            .get("http://localhost:8080/carreras/" + slug)
+            .then((response) => {
                 console.log("Datos carrera recibidos: ", response.data);
                 setThisCarrera(response.data);
             })
-            .catch(error => {
-                console.error('Error al obtener la carrera:', error);
+            .catch((error) => {
+                console.error("Error al obtener la carrera:", error);
             });
         // get all materias for this carrera
-        axios.get('http://localhost:8080/materias/carreras/' + slug + '/materias')
-            .then(response => {
+        axios
+            .get("http://localhost:8080/materias/carreras/" + slug + "/materias")
+            .then((response) => {
                 console.log("Datos materias recibidos: ", response.data);
                 setMaterias(response.data);
             })
-            .catch(error => {
-                console.error('Error al obtener las materias:', error);
+            .catch((error) => {
+                console.error("Error al obtener las materias:", error);
             });
-    }, [])
+
+        //get all approved materias
+        axios
+            .get("http://localhost:8080/materias/carreras/" + slug + "/aprobadas")
+            .then((response) => {
+                console.log("Datos materias aprobadas recibidos: ", response.data);
+                setMateriasAprobadas(response.data);
+            })
+            .catch((error) => {
+                console.error("Error al obtener las materias aprobadas:", error);
+            });
+    }, []);
 
 
+    /***********************************************************************************************
+    *    REVISAR CONDICION: que pasa si materias esta vacio cuando materias aprobadas se recibe?   *
+    ************************************************************************************************/
+    React.useEffect(()=>{
+        // Update estado in each materia once materiasAprobadas has been updated 
+        setMaterias(actualizarEstadoMaterias(materias, materiasAprobadas));
+    },[materiasAprobadas])
 
-    //table logic
-    function createData(name, calories, fat, carbs, protein) {
-        return { name, calories, fat, carbs, protein };
+
+    const [anchorEl, setAnchorEl] = React.useState(null);
+
+    const handleClick = (event) => {
+        setAnchorEl(event.currentTarget);
+    };
+
+    const handleClose = () => {
+        setAnchorEl(null);
+    };
+
+    const open = Boolean(anchorEl);
+    const id = open ? "simple-popover" : undefined;
+
+    // Correlativas Logic
+    function actualizarEstadoMaterias(materias, materiasAprobadas) {
+        // Obtener los IDs de las materias aprobadas
+        const idsMateriasAprobadas = new Set(materiasAprobadas.map(materia => materia.idMateria));
+    
+        // Actualizar el estado de las materias
+        return materias.map(materia => {
+            // Si la materia ya está aprobada o promocionada, no modificar su estado
+            if (materia.estado !== "Pendiente") {
+                return materia;
+            }
+    
+            // Verificar si todas las correlativas están aprobadas
+            const correlativasNoAprobadas = materia.correlativas.filter(
+                correlativa => !idsMateriasAprobadas.has(correlativa.idMateria)
+            );
+    
+            if (correlativasNoAprobadas.length === 0) {
+                // Todas las correlativas están aprobadas
+                return { ...materia, estado: "Cursable" };
+            } else {
+                // Hay correlativas no aprobadas
+                const nombresNoAprobadas = correlativasNoAprobadas.map(correlativa => correlativa.nombreMateria);
+                return { 
+                    ...materia, 
+                    estado: `falta aprobar: ${nombresNoAprobadas.join(", ")}` 
+                };
+            }
+        });
     }
+    
 
-    const rows = [
-        createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
-        createData('Ice cream sandwich', 237, 9.0, 37, 4.3),
-        createData('Eclair', 262, 16.0, 24, 6.0),
-        createData('Cupcake', 305, 3.7, 67, 4.3),
-        createData('Gingerbread', 356, 16.0, 49, 3.9),
-    ];
 
     return (
         <div className={styles.Body}>
@@ -67,66 +113,76 @@ function Carrera() {
                     <div className={styles.Right}>right</div>
                 </Container>
             </div>
-            <Container maxWidth='lg'>
+            <Container maxWidth="lg">
                 <div className={styles.Main}>
                     <div className={styles.MainHeader}>
                         <h2>{thisCarrera.nombreC}</h2>
                     </div>
                     <div className={styles.Table}>
-                        {/* here goes a table */}
-                        <TableContainer component={Paper}>
-                            <Table sx={{ minWidth: 650 }} aria-label="materias table">
-                                <TableHead>
-                                    <TableRow>
-                                        <TableCell>Materia</TableCell>
-                                        <TableCell align="right">Año</TableCell>
-                                        <TableCell align="right">Cuatrimestre</TableCell>
-                                        <TableCell align="right">Estado</TableCell>
-                                        <TableCell align="right">Fecha de Aprobación</TableCell>
-                                        <TableCell align="right">Calificación</TableCell>
-                                        <TableCell align="right">Carrera</TableCell>
-                                        <TableCell align="right">Correlativas</TableCell>
-                                    </TableRow>
-                                </TableHead>
-                                <TableBody>
-                                    {materias.map((materia) => (
-                                        <TableRow key={materia.idMateria}>
-                                            <TableCell component="th" scope="row">
-                                                {materia.nombreMateria}
-                                            </TableCell>
-                                            <TableCell align="right">{materia.anio}</TableCell>
-                                            <TableCell align="right">{materia.cuatrimestre}</TableCell>
-                                            <TableCell align="right">{materia.estado}</TableCell>
-                                            <TableCell align="right">
-                                                {materia.fechaAprobacion ? materia.fechaAprobacion : "N/A"}
-                                            </TableCell>
-                                            <TableCell align="right">
-                                                {materia.calificacion !== null ? materia.calificacion : "N/A"}
-                                            </TableCell>
-                                            <TableCell align="right">
-                                                {materia.carrera.nombreC}
-                                            </TableCell>
-                                            <TableCell align="right">
-                                                {materia.correlativas.length > 0 ? (
-                                                    materia.correlativas.map((corr) => (
-                                                        <Typography key={corr.idMateria}>
-                                                            {corr.nombreMateria}
-                                                        </Typography>
-                                                    ))
-                                                ) : (
-                                                    "Ninguna"
-                                                )}
-                                            </TableCell>
-                                        </TableRow>
-                                    ))}
-                                </TableBody>
-                            </Table>
-                        </TableContainer>
+                        {/* Encabezados */}
+                        <div className={styles.tableHeaders}>
+                            <div className={styles.singleHeader}> Materia</div>
+                            <div className={styles.singleHeader}>Año</div>
+                            <div className={styles.singleHeader}>Cuatrimestre</div>
+                            <div className={styles.singleHeader}>Estado</div>
+                            <div className={styles.singleHeader}>Fecha de Aprobación</div>
+                            <div className={styles.singleHeader}>Calificación</div>
+                            <div className={styles.singleHeader}>Correlativas</div>
+                        </div>
+
+                        {/* Filas de datos */}
+                        {materias.map((materia) => (
+                            <div key={materia.idMateria} className={styles.dataRows}>
+                                <div className={styles.singleData}>{materia.nombreMateria}</div>
+                                <div className={styles.singleData}>{materia.anio}</div>
+                                <div className={styles.singleData}>{materia.cuatrimestre}</div>
+                                <div className={styles.singleData}>{materia.estado}</div>
+                                <div className={styles.singleData}>
+                                    {materia.fechaAprobacion ? materia.fechaAprobacion : "N/A"}
+                                </div>
+                                <div className={styles.singleData}>
+                                    {materia.calificacion !== null ? materia.calificacion : "N/A"}
+                                </div>
+                                <div className={styles.singleData}>
+                                    <Button
+                                        aria-describedby={id}
+                                        variant="contained"
+                                        onClick={handleClick}
+                                    >
+                                        <Icon icon="mdi:eye" />
+                                    </Button>
+                                    <Popover
+                                        id={id}
+                                        open={open}
+                                        anchorEl={anchorEl}
+                                        onClose={handleClose}
+                                        anchorOrigin={{
+                                            vertical: "center",
+                                            horizontal: "center",
+                                        }}
+                                        transformOrigin={{
+                                            vertical: "top",
+                                            horizontal: "left",
+                                        }}
+                                    >
+                                        {materia.correlativas.length > 0
+                                            ? materia.correlativas
+                                                .map((corr) => (
+                                                    <span key={corr.idMateria}>
+                                                        {corr.nombreMateria}
+                                                    </span>
+                                                ))
+                                                .reduce((prev, curr) => [prev, ", ", curr])
+                                            : "Ninguna"}
+                                    </Popover>
+                                </div>
+                            </div>
+                        ))}
                     </div>
                 </div>
             </Container>
         </div>
-    )
+    );
 }
 
 export default Carrera;

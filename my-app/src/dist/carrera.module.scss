@@ -37,10 +37,11 @@ $color4: #4A628A;
     }
 
     .Main {
-        
-        .MainHeader{
+
+        .MainHeader {
             max-width: fit-content;
             margin: 3em auto;
+
             h2 {
                 max-width: fit-content;
             }
@@ -48,6 +49,28 @@ $color4: #4A628A;
 
         .Table {
             background-color: #7AB2D3;
+
+            & .tableHeaders {
+                display: flex;
+                font-weight: bold;
+                border-bottom: 1px solid #ccc;
+                padding: 10px;
+
+                & .singleHeader {
+                    flex: 1;
+                    text-align: center;
+                }
+            }
+
+            & .dataRows {
+                display: flex;
+                padding: 10px;
+                border-bottom: 1px solid #ccc;
+                & .singleData {
+                    flex: 1;
+                    text-align: center;
+                }
+            }
         }
     }
 }
