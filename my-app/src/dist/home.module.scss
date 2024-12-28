@@ -1,4 +1,4 @@
-@import './GlobalStyles.module.scss';
+@import './globalStyles.module.scss';
 
 $color1: #DFF2EB;
 $color2: #B9E5E8;
@@ -6,7 +6,7 @@ $color3: #7AB2D3;
 $color4: #4A628A;
 
 .Body {
-    background-color: $bg-dark;
+    background-color: $bg-light;
     height: 100%;
     width: 100%;
     left: 0;
@@ -15,7 +15,7 @@ $color4: #4A628A;
     position: fixed;
 
     .TopBar {
-        background-color: $bg-light;
+        background-color: $bg-dark;
         width: 100%;
         height: 6em;
 

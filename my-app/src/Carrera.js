@@ -1,4 +1,4 @@
-import styles from './dist/Carrera.module.scss';
+import styles from './dist/carrera.module.scss';
 import React from 'react';
 import { useParams } from 'react-router-dom';
 import { Container } from '@mui/material';
