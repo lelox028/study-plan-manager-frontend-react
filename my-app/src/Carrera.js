@@ -72,7 +72,6 @@ function Carrera() {
               <div className={styles.singleHeader}>Estado</div>
               <div className={styles.singleHeader}>Fecha de Aprobación</div>
               <div className={styles.singleHeader}>Calificación</div>
-              <div className={styles.singleHeader}>Carrera</div>
               <div className={styles.singleHeader}>Correlativas</div>
             </div>
 
@@ -88,9 +87,6 @@ function Carrera() {
                 </div>
                 <div className={styles.singleData}>
                   {materia.calificacion !== null ? materia.calificacion : "N/A"}
-                </div>
-                <div className={styles.singleData}>
-                  {materia.carrera.nombreC}
                 </div>
                 <div className={styles.singleData}>
                   <Button
