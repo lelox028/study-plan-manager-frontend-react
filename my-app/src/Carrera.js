@@ -4,6 +4,9 @@ import { useParams } from "react-router-dom";
 import { Container } from "@mui/material";
 import axios from "axios";
 import { Popover } from "@mui/material";
+import Button from "@mui/material/Button";
+import { Icon } from "@iconify/react";
+
 
 function Carrera() {
   const { slug } = useParams();
@@ -34,6 +37,19 @@ function Carrera() {
       });
   }, []);
 
+  const [anchorEl, setAnchorEl] = React.useState(null);
+
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const open = Boolean(anchorEl);
+  const id = open ? "simple-popover" : undefined;
+
   return (
     <div className={styles.Body}>
       <div className={styles.TopBar}>
@@ -48,50 +64,56 @@ function Carrera() {
             <h2>{thisCarrera.nombreC}</h2>
           </div>
           <div className={styles.Table}>
-              {/* Encabezados */}
-              <div
-              className={styles.tableHeaders}
-              >
-                <div className={styles.singleHeader}> Materia</div>
-                <div className={styles.singleHeader}>Año</div>
-                <div className={styles.singleHeader}>Cuatrimestre</div>
-                <div className={styles.singleHeader}>Estado</div>
-                <div className={styles.singleHeader}>
-                  Fecha de Aprobación
-                </div>
-                <div className={styles.singleHeader}>Calificación</div>
-                <div className={styles.singleHeader}>Carrera</div>
-                <div className={styles.singleHeader}>Correlativas</div>
-              </div>
+            {/* Encabezados */}
+            <div className={styles.tableHeaders}>
+              <div className={styles.singleHeader}> Materia</div>
+              <div className={styles.singleHeader}>Año</div>
+              <div className={styles.singleHeader}>Cuatrimestre</div>
+              <div className={styles.singleHeader}>Estado</div>
+              <div className={styles.singleHeader}>Fecha de Aprobación</div>
+              <div className={styles.singleHeader}>Calificación</div>
+              <div className={styles.singleHeader}>Carrera</div>
+              <div className={styles.singleHeader}>Correlativas</div>
+            </div>
 
-              {/* Filas de datos */}
-              {materias.map((materia) => (
-                <div
-                  key={materia.idMateria}
-                  className={styles.dataRows}
-                >
-                  <div className={styles.singleData}>{materia.nombreMateria}</div>
-                  <div className={styles.singleData}>
-                    {materia.anio}
-                  </div>
-                  <div className={styles.singleData}>
-                    {materia.cuatrimestre}
-                  </div>
-                  <div className={styles.singleData}>
-                    {materia.estado}
-                  </div>
-                  <div className={styles.singleData}>
-                    {materia.fechaAprobacion ? materia.fechaAprobacion : "N/A"}
-                  </div>
-                  <div className={styles.singleData}>
-                    {materia.calificacion !== null
-                      ? materia.calificacion
-                      : "N/A"}
-                  </div>
-                  <div className={styles.singleData}>
-                    {materia.carrera.nombreC}
-                  </div>
-                  <div className={styles.singleData}>
+            {/* Filas de datos */}
+            {materias.map((materia) => (
+              <div key={materia.idMateria} className={styles.dataRows}>
+                <div className={styles.singleData}>{materia.nombreMateria}</div>
+                <div className={styles.singleData}>{materia.anio}</div>
+                <div className={styles.singleData}>{materia.cuatrimestre}</div>
+                <div className={styles.singleData}>{materia.estado}</div>
+                <div className={styles.singleData}>
+                  {materia.fechaAprobacion ? materia.fechaAprobacion : "N/A"}
+                </div>
+                <div className={styles.singleData}>
+                  {materia.calificacion !== null ? materia.calificacion : "N/A"}
+                </div>
+                <div className={styles.singleData}>
+                  {materia.carrera.nombreC}
+                </div>
+                <div className={styles.singleData}>
+                  <Button
+                    aria-describedby={id}
+                    variant="contained"
+                    onClick={handleClick}
+                  >
+                    <Icon icon="mdi:eye" />
+                  </Button>
+                  <Popover
+                    id={id}
+                    open={open}
+                    anchorEl={anchorEl}
+                    onClose={handleClose}
+                    anchorOrigin={{
+                      vertical: "center",
+                      horizontal: "center",
+                    }}
+                    transformOrigin={{
+                      vertical: "top",
+                      horizontal: "left",
+                    }}
+                  >
                     {materia.correlativas.length > 0
                       ? materia.correlativas
                           .map((corr) => (
@@ -101,9 +123,10 @@ function Carrera() {
                           ))
                           .reduce((prev, curr) => [prev, ", ", curr])
                       : "Ninguna"}
-                  </div>
+                  </Popover>
                 </div>
-              ))}
+              </div>
+            ))}
           </div>
         </div>
       </Container>
