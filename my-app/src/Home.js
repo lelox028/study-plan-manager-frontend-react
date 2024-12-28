@@ -1,4 +1,4 @@
-import styles from './dist/Home.module.scss';
+import styles from './dist/home.module.scss';
 import { Container } from '@mui/material';
 import React from 'react'
 import axios from 'axios';
