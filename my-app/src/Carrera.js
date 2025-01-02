@@ -32,31 +32,33 @@ function Carrera() {
             .then((response) => {
                 console.log("Datos materias recibidos: ", response.data);
                 setMaterias(response.data);
+                
+                //get all approved materias
+                axios
+                    .get("http://localhost:8080/materias/carreras/" + slug + "/aprobadas")
+                    .then((response) => {
+                        console.log("Datos materias aprobadas recibidos: ", response.data);
+                        setMateriasAprobadas(response.data);
+                    })
+                    .catch((error) => {
+                        console.error("Error al obtener las materias aprobadas:", error);
+                    });
             })
             .catch((error) => {
                 console.error("Error al obtener las materias:", error);
             });
 
-        //get all approved materias
-        axios
-            .get("http://localhost:8080/materias/carreras/" + slug + "/aprobadas")
-            .then((response) => {
-                console.log("Datos materias aprobadas recibidos: ", response.data);
-                setMateriasAprobadas(response.data);
-            })
-            .catch((error) => {
-                console.error("Error al obtener las materias aprobadas:", error);
-            });
+
     }, []);
 
 
     /***********************************************************************************************
     *    REVISAR CONDICION: que pasa si materias esta vacio cuando materias aprobadas se recibe?   *
     ************************************************************************************************/
-    React.useEffect(()=>{
+    React.useEffect(() => {
         // Update estado in each materia once materiasAprobadas has been updated 
         setMaterias(actualizarEstadoMaterias(materias, materiasAprobadas));
-    },[materiasAprobadas])
+    }, [materiasAprobadas])
 
 
     const [anchorEl, setAnchorEl] = React.useState(null);
@@ -76,33 +78,33 @@ function Carrera() {
     function actualizarEstadoMaterias(materias, materiasAprobadas) {
         // Obtener los IDs de las materias aprobadas
         const idsMateriasAprobadas = new Set(materiasAprobadas.map(materia => materia.idMateria));
-    
+
         // Actualizar el estado de las materias
         return materias.map(materia => {
             // Si la materia ya está aprobada o promocionada, no modificar su estado
             if (materia.estado !== "Pendiente") {
                 return materia;
             }
-    
+
             // Verificar si todas las correlativas están aprobadas
             const correlativasNoAprobadas = materia.correlativas.filter(
                 correlativa => !idsMateriasAprobadas.has(correlativa.idMateria)
             );
-    
+
             if (correlativasNoAprobadas.length === 0) {
                 // Todas las correlativas están aprobadas
                 return { ...materia, estado: "Cursable" };
             } else {
                 // Hay correlativas no aprobadas
                 const nombresNoAprobadas = correlativasNoAprobadas.map(correlativa => correlativa.nombreMateria);
-                return { 
-                    ...materia, 
-                    estado: `falta aprobar: ${nombresNoAprobadas.join(", ")}` 
+                return {
+                    ...materia,
+                    estado: `falta aprobar: ${nombresNoAprobadas.join(", ")}`
                 };
             }
         });
     }
-    
+
 
 
     return (
@@ -125,9 +127,11 @@ function Carrera() {
                             <div className={styles.singleHeader}>Año</div>
                             <div className={styles.singleHeader}>Cuatrimestre</div>
                             <div className={styles.singleHeader}>Estado</div>
+                            <div className={styles.singleHeader}>Fecha de Regularización</div>
                             <div className={styles.singleHeader}>Fecha de Aprobación</div>
                             <div className={styles.singleHeader}>Calificación</div>
                             <div className={styles.singleHeader}>Correlativas</div>
+                            <div className={styles.singleHeader}>Editar</div>
                         </div>
 
                         {/* Filas de datos */}
@@ -137,6 +141,9 @@ function Carrera() {
                                 <div className={styles.singleData}>{materia.anio}</div>
                                 <div className={styles.singleData}>{materia.cuatrimestre}</div>
                                 <div className={styles.singleData}>{materia.estado}</div>
+                                <div className={styles.singleData}>
+                                    {materia.fechaRegularizacion ? materia.fechaRegularizacion : "N/A"}
+                                </div>
                                 <div className={styles.singleData}>
                                     {materia.fechaAprobacion ? materia.fechaAprobacion : "N/A"}
                                 </div>
@@ -175,6 +182,11 @@ function Carrera() {
                                                 .reduce((prev, curr) => [prev, ", ", curr])
                                             : "Ninguna"}
                                     </Popover>
+                                </div>
+                                <div>
+                                    <Button>
+                                        <Icon icon="mdi:pencil" width="24" height="24" />
+                                    </Button>
                                 </div>
                             </div>
                         ))}
