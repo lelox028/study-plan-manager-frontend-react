@@ -6,6 +6,14 @@ import axios from "axios";
 import { Popover } from "@mui/material";
 import Button from "@mui/material/Button";
 import { Icon } from "@iconify/react";
+// Dialog imports
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+import TextField from '@mui/material/TextField';
+
 
 
 function Carrera() {
@@ -34,7 +42,7 @@ function Carrera() {
             .then((response) => {
                 console.log("Datos materias recibidos: ", response.data);
                 setMaterias(response.data);
-                
+
                 //get all approved materias
                 axios
                     .get("http://localhost:8080/materias/carreras/" + slug + "/aprobadas")
@@ -65,7 +73,7 @@ function Carrera() {
 
     const [anchorEl, setAnchorEl] = React.useState(null);
 
-    const handleClick = (event,materia) => {
+    const handleClick = (event, materia) => {
         setMateriaSeleccionada(materia);
         setAnchorEl(event.currentTarget);
     };
@@ -108,98 +116,152 @@ function Carrera() {
         });
     }
 
+    // Edit Dialog Logic
+    const [openEdit, setOpenEdit] = React.useState(false);
+    const handleClickOpenEdit = (event, materia) => {
+        setMateriaSeleccionada(materia);
+        setOpenEdit(true);
+    };
 
+    const succesEdit = () => {
+        setOpenEdit(false);
+        //axios.put materia
+    };
+
+    const cancelEdit = () => {
+        setMateriaSeleccionada({})
+        setOpenEdit(false);
+    };
+
+    //watch materia seleccionada:
+    React.useEffect(() => {
+        console.log("materia seleccionada: ", materiaSeleccionada)
+    }, [materiaSeleccionada])
 
     return (
-        <div className={styles.Body}>
-            <div className={styles.TopBar}>
-                <Container className={styles.TopBarContainer}>
-                    <div className={styles.Left}>left</div>
-                    <div className={styles.Right}>right</div>
+        <>
+            <Dialog
+                open={openEdit}
+                onClose={cancelEdit}
+            >
+                { }
+                <DialogTitle id="alert-dialog-title">
+                    {"Editing " + materiaSeleccionada.nombreMateria}
+                </DialogTitle>
+                <DialogContent>
+                    <DialogContentText id="alert-dialog-description">
+                        Here you can modify <span style={{ fontWeight: "bolder" }}>{materiaSeleccionada.nombreMateria}</span> fields... but you already knew that, lol.
+                    </DialogContentText>
+                    {/* here goes inputfields */}
+                    <TextField
+                        id="materia-nombre"
+                        label="Nombre"
+                        variant="outlined"
+                        defaultValue={materiaSeleccionada.nombreMateria}
+                        onChange={(e) => { setMateriaSeleccionada({ ...materiaSeleccionada, nombreMateria: e.target.value }) }} />
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={cancelEdit}>
+                        Cancelar
+                    </Button>
+                    <Button onClick={succesEdit} autoFocus>
+                        Aceptar
+                    </Button>
+                </DialogActions>
+            </Dialog>
+            <div className={styles.Body}>
+                <div className={styles.TopBar}>
+                    <Container className={styles.TopBarContainer}>
+                        <div className={styles.Left}>left</div>
+                        <div className={styles.Right}>right</div>
+                    </Container>
+                </div>
+                <Container maxWidth="lg">
+                    <div className={styles.Main}>
+                        <div className={styles.MainHeader}>
+                            <h2>{thisCarrera.nombreC}</h2>
+                        </div>
+                        <div className={styles.Table}>
+                            {/* Encabezados */}
+                            <div className={styles.tableHeaders}>
+                                <div className={styles.singleHeader}> Materia</div>
+                                <div className={styles.singleHeader}>Año</div>
+                                <div className={styles.singleHeader}>Cuatrimestre</div>
+                                <div className={styles.singleHeader}>Estado</div>
+                                <div className={styles.singleHeader}>Fecha de Regularización</div>
+                                <div className={styles.singleHeader}>Fecha de Aprobación</div>
+                                <div className={styles.singleHeader}>Calificación</div>
+                                <div className={styles.singleHeader}>Correlativas</div>
+                                <div className={styles.singleHeader}>Editar</div>
+                            </div>
+
+                            {/* Filas de datos */}
+                            {materias.map((materia) => {
+                                // console.log(materia);
+
+                                return (
+                                    <div key={materia.idMateria} className={styles.dataRows}>
+                                        <div className={styles.singleData}>{materia.nombreMateria}</div>
+                                        <div className={styles.singleData}>{materia.anio}</div>
+                                        <div className={styles.singleData}>{materia.cuatrimestre}</div>
+                                        <div className={styles.singleData}>{materia.estado}</div>
+                                        <div className={styles.singleData}>
+                                            {materia.fechaRegularizacion ? materia.fechaRegularizacion : "N/A"}
+                                        </div>
+                                        <div className={styles.singleData}>
+                                            {materia.fechaAprobacion ? materia.fechaAprobacion : "N/A"}
+                                        </div>
+                                        <div className={styles.singleData}>
+                                            {materia.calificacion !== null ? materia.calificacion : "N/A"}
+                                        </div>
+                                        <div className={styles.singleData}>
+                                            <Button
+                                                aria-describedby={id}
+                                                variant="contained"
+                                                onClick={(e) => handleClick(e, materia)}
+                                            >
+                                                <Icon icon="mdi:eye" />
+                                            </Button>
+                                            <Popover
+                                                id={id}
+                                                open={open}
+                                                anchorEl={anchorEl}
+                                                onClose={handleClose}
+                                                anchorOrigin={{
+                                                    vertical: "center",
+                                                    horizontal: "center",
+                                                }}
+                                                transformOrigin={{
+                                                    vertical: "top",
+                                                    horizontal: "left",
+                                                }}
+                                            >
+                                                {materiaSeleccionada?.correlativas?.length > 0
+                                                    ? materiaSeleccionada.correlativas
+                                                        .map((corr) => (
+                                                            <span key={corr.idMateria}>
+                                                                {corr.nombreMateria}
+                                                            </span>
+                                                        ))
+                                                        .reduce((prev, curr) => [prev, ", ", curr])
+                                                    : "Ninguna"}
+                                            </Popover>
+                                        </div>
+                                        <div>
+                                            <Button
+                                                onClick={(e) => handleClickOpenEdit(e, materia)}
+                                            >
+                                                <Icon icon="mdi:pencil" width="24" height="24" />
+                                            </Button>
+                                        </div>
+                                    </div>
+                                )
+                            })}
+                        </div>
+                    </div>
                 </Container>
             </div>
-            <Container maxWidth="lg">
-                <div className={styles.Main}>
-                    <div className={styles.MainHeader}>
-                        <h2>{thisCarrera.nombreC}</h2>
-                    </div>
-                    <div className={styles.Table}>
-                        {/* Encabezados */}
-                        <div className={styles.tableHeaders}>
-                            <div className={styles.singleHeader}> Materia</div>
-                            <div className={styles.singleHeader}>Año</div>
-                            <div className={styles.singleHeader}>Cuatrimestre</div>
-                            <div className={styles.singleHeader}>Estado</div>
-                            <div className={styles.singleHeader}>Fecha de Regularización</div>
-                            <div className={styles.singleHeader}>Fecha de Aprobación</div>
-                            <div className={styles.singleHeader}>Calificación</div>
-                            <div className={styles.singleHeader}>Correlativas</div>
-                            <div className={styles.singleHeader}>Editar</div>
-                        </div>
-
-                        {/* Filas de datos */}
-                        {materias.map((materia) => { 
-                                console.log(materia);
-                                
-                            return (
-                            <div key={materia.idMateria} className={styles.dataRows}>
-                                <div className={styles.singleData}>{materia.nombreMateria}</div>
-                                <div className={styles.singleData}>{materia.anio}</div>
-                                <div className={styles.singleData}>{materia.cuatrimestre}</div>
-                                <div className={styles.singleData}>{materia.estado}</div>
-                                <div className={styles.singleData}>
-                                    {materia.fechaRegularizacion ? materia.fechaRegularizacion : "N/A"}
-                                </div>
-                                <div className={styles.singleData}>
-                                    {materia.fechaAprobacion ? materia.fechaAprobacion : "N/A"}
-                                </div>
-                                <div className={styles.singleData}>
-                                    {materia.calificacion !== null ? materia.calificacion : "N/A"}
-                                </div>
-                                <div className={styles.singleData}>
-                                    <Button
-                                        aria-describedby={id}
-                                        variant="contained"
-                                        onClick={(e) =>handleClick(e,materia)}
-                                    >
-                                        <Icon icon="mdi:eye" />
-                                    </Button>
-                                    <Popover
-                                        id={id}
-                                        open={open}
-                                        anchorEl={anchorEl}
-                                        onClose={handleClose}
-                                        anchorOrigin={{
-                                            vertical: "center",
-                                            horizontal: "center",
-                                        }}
-                                        transformOrigin={{
-                                            vertical: "top",
-                                            horizontal: "left",
-                                        }}
-                                    >
-                                        {materiaSeleccionada?.correlativas?.length > 0
-                                            ? materiaSeleccionada.correlativas
-                                                .map((corr) => (
-                                                    <span key={corr.idMateria}>
-                                                        {corr.nombreMateria}
-                                                    </span>
-                                                ))
-                                                .reduce((prev, curr) => [prev, ", ", curr])
-                                            : "Ninguna"}
-                                    </Popover>
-                                </div>
-                                <div>
-                                    <Button>
-                                        <Icon icon="mdi:pencil" width="24" height="24" />
-                                    </Button>
-                                </div>
-                            </div>
-                        )})}
-                    </div>
-                </div>
-            </Container>
-        </div>
+        </>
     );
 }
 
