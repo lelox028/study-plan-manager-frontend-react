@@ -102,7 +102,7 @@ function Carrera() {
                 const nombresNoAprobadas = correlativasNoAprobadas.map(correlativa => correlativa.nombreMateria);
                 return {
                     ...materia,
-                    estado: `falta aprobar: ${nombresNoAprobadas.join(", ")}`
+                    estado: nombresNoAprobadas
                 };
             }
         });
@@ -146,7 +146,7 @@ function Carrera() {
                                 <div className={styles.singleData}>{materia.nombreMateria}</div>
                                 <div className={styles.singleData}>{materia.anio}</div>
                                 <div className={styles.singleData}>{materia.cuatrimestre}</div>
-                                <div className={styles.singleData}>{materia.estado}</div>
+                                <div className={styles.singleData}>{Array.isArray(materia.estado) ? `Falta aprobar: ${materia?.estado?.join(",")}` : materia.estado}</div>
                                 <div className={styles.singleData}>
                                     {materia.fechaRegularizacion ? materia.fechaRegularizacion : "N/A"}
                                 </div>
