@@ -14,6 +14,8 @@ function Carrera() {
     const [thisCarrera, setThisCarrera] = React.useState([]);
     const [materias, setMaterias] = React.useState([]);
     const [materiasAprobadas, setMateriasAprobadas] = React.useState([]);
+    const [materiaSeleccionada, setMateriaSeleccionada] = React.useState({});
+
 
     React.useEffect(() => {
         // get Carrera Data
@@ -63,7 +65,8 @@ function Carrera() {
 
     const [anchorEl, setAnchorEl] = React.useState(null);
 
-    const handleClick = (event) => {
+    const handleClick = (event,materia) => {
+        setMateriaSeleccionada(materia);
         setAnchorEl(event.currentTarget);
     };
 
@@ -135,7 +138,10 @@ function Carrera() {
                         </div>
 
                         {/* Filas de datos */}
-                        {materias.map((materia) => (
+                        {materias.map((materia) => { 
+                                console.log(materia);
+                                
+                            return (
                             <div key={materia.idMateria} className={styles.dataRows}>
                                 <div className={styles.singleData}>{materia.nombreMateria}</div>
                                 <div className={styles.singleData}>{materia.anio}</div>
@@ -154,7 +160,7 @@ function Carrera() {
                                     <Button
                                         aria-describedby={id}
                                         variant="contained"
-                                        onClick={handleClick}
+                                        onClick={(e) =>handleClick(e,materia)}
                                     >
                                         <Icon icon="mdi:eye" />
                                     </Button>
@@ -172,8 +178,8 @@ function Carrera() {
                                             horizontal: "left",
                                         }}
                                     >
-                                        {materia.correlativas.length > 0
-                                            ? materia.correlativas
+                                        {materiaSeleccionada?.correlativas?.length > 0
+                                            ? materiaSeleccionada.correlativas
                                                 .map((corr) => (
                                                     <span key={corr.idMateria}>
                                                         {corr.nombreMateria}
@@ -189,7 +195,7 @@ function Carrera() {
                                     </Button>
                                 </div>
                             </div>
-                        ))}
+                        )})}
                     </div>
                 </div>
             </Container>
