@@ -5,6 +5,15 @@ $color2: #B9E5E8;
 $color3: #7AB2D3;
 $color4: #4A628A;
 
+:global(.MuiPopover-root) {
+    & :global(.MuiPaper-root) {
+        border: 1px solid $color4;
+        padding: 10px;
+        border-radius: 5px;
+        color: black;
+    }
+}
+
 .Body {
     background-color: $color1;
     height: 100%;
@@ -66,6 +75,8 @@ $color4: #4A628A;
                 display: flex;
                 padding: 10px;
                 border-bottom: 1px solid #ccc;
+                align-items: center;
+
                 & .singleData {
                     flex: 1;
                     text-align: center;

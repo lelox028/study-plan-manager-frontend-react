@@ -18,6 +18,7 @@ import TextField from '@mui/material/TextField';
 
 function Carrera() {
   const { slug } = useParams();
+  const { slug } = useParams();
 
   const [thisCarrera, setThisCarrera] = React.useState([]);
   const [materias, setMaterias] = React.useState([]);
@@ -88,10 +89,12 @@ function Carrera() {
   // Correlativas Logic
   function actualizarEstadoMaterias(materias, materiasAprobadas) {
     // Obtener los IDs de las materias aprobadas
-    const idsMateriasAprobadas = new Set(materiasAprobadas.map(materia => materia.idMateria));
+    const idsMateriasAprobadas = new Set(
+      materiasAprobadas.map((materia) => materia.idMateria)
+    );
 
     // Actualizar el estado de las materias
-    return materias.map(materia => {
+    return materias.map((materia) => {
       // Si la materia ya está aprobada o promocionada, no modificar su estado
       if (materia.estado !== "Pendiente") {
         return materia;
@@ -99,7 +102,7 @@ function Carrera() {
 
       // Verificar si todas las correlativas están aprobadas
       const correlativasNoAprobadas = materia.correlativas.filter(
-        correlativa => !idsMateriasAprobadas.has(correlativa.idMateria)
+        (correlativa) => !idsMateriasAprobadas.has(correlativa.idMateria)
       );
 
       if (correlativasNoAprobadas.length === 0) {
@@ -174,6 +177,28 @@ function Carrera() {
           </Button>
         </DialogActions>
       </Dialog>
+      <Popover
+        id={id}
+        open={open}
+        anchorEl={anchorEl}
+        onClose={handleClose}
+        anchorOrigin={{
+          vertical: "center",
+          horizontal: "center",
+        }}
+        transformOrigin={{
+          vertical: "top",
+          horizontal: "left",
+        }}
+      >
+        {materiaSeleccionada?.correlativas?.length > 0
+          ? materiaSeleccionada.correlativas
+              .map((corr) => (
+                <span key={corr.idMateria}>{corr.nombreMateria}</span>
+              ))
+              .reduce((prev, curr) => [prev, ", ", curr])
+          : "Ninguna"}
+      </Popover>
       <div className={styles.Body}>
         <div className={styles.TopBar}>
           <Container className={styles.TopBarContainer}>
@@ -193,7 +218,9 @@ function Carrera() {
                 <div className={styles.singleHeader}>Año</div>
                 <div className={styles.singleHeader}>Cuatrimestre</div>
                 <div className={styles.singleHeader}>Estado</div>
-                <div className={styles.singleHeader}>Fecha de Regularización</div>
+                <div className={styles.singleHeader}>
+                  Fecha de Regularización
+                </div>
                 <div className={styles.singleHeader}>Fecha de Aprobación</div>
                 <div className={styles.singleHeader}>Calificación</div>
                 <div className={styles.singleHeader}>Correlativas</div>
@@ -202,20 +229,36 @@ function Carrera() {
 
               {/* Filas de datos */}
               {materias.map((materia) => {
+                console.log(materia);
+
                 return (
                   <div key={materia.idMateria} className={styles.dataRows}>
-                    <div className={styles.singleData}>{materia.nombreMateria}</div>
+                    <div className={styles.singleData}>
+                      {materia.nombreMateria}
+                    </div>
                     <div className={styles.singleData}>{materia.anio}</div>
-                    <div className={styles.singleData}>{materia.cuatrimestre}</div>
-                    <div className={styles.singleData}>{materia.estado}</div>
                     <div className={styles.singleData}>
-                      {materia.fechaRegularizacion ? materia.fechaRegularizacion : "N/A"}
+                      {materia.cuatrimestre}
                     </div>
                     <div className={styles.singleData}>
-                      {materia.fechaAprobacion ? materia.fechaAprobacion : "N/A"}
+                      {Array.isArray(materia.estado)
+                        ? `Falta aprobar: ${materia?.estado?.join(",")}`
+                        : materia.estado}
                     </div>
                     <div className={styles.singleData}>
-                      {materia.calificacion !== null ? materia.calificacion : "N/A"}
+                      {materia.fechaRegularizacion
+                        ? materia.fechaRegularizacion
+                        : "N/A"}
+                    </div>
+                    <div className={styles.singleData}>
+                      {materia.fechaAprobacion
+                        ? materia.fechaAprobacion
+                        : "N/A"}
+                    </div>
+                    <div className={styles.singleData}>
+                      {materia.calificacion !== null
+                        ? materia.calificacion
+                        : "N/A"}
                     </div>
                     <div className={styles.singleData}>
                       <Button
@@ -225,33 +268,9 @@ function Carrera() {
                       >
                         <Icon icon="mdi:eye" />
                       </Button>
-                      <Popover
-                        id={id}
-                        open={open}
-                        anchorEl={anchorEl}
-                        onClose={handleClose}
-                        anchorOrigin={{
-                          vertical: "center",
-                          horizontal: "center",
-                        }}
-                        transformOrigin={{
-                          vertical: "top",
-                          horizontal: "left",
-                        }}
-                      >
-                        {materiaSeleccionada?.correlativas?.length > 0
-                          ? materiaSeleccionada.correlativas
-                            .map((corr) => (
-                              <span key={corr.idMateria}>
-                                {corr.nombreMateria}
-                              </span>
-                            ))
-                            .reduce((prev, curr) => [prev, ", ", curr])
-                          : "Ninguna"}
-                      </Popover>
                     </div>
                     <div>
-                      <Button
+                    <Button
                         onClick={(e) => handleClickOpenEdit(e, materia)}
                       >
                         <Icon icon="mdi:pencil" width="24" height="24" />
