@@ -6,6 +6,7 @@ import axios from "axios";
 import { Popover } from "@mui/material";
 import Button from "@mui/material/Button";
 import { Icon } from "@iconify/react";
+import Checkbox from '@mui/material/Checkbox';
 // Dialog imports
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
@@ -13,7 +14,14 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import TextField from '@mui/material/TextField';
-
+// Select imports
+import MenuItem from '@mui/material/MenuItem';
+import Select from '@mui/material/Select';
+// Date picker
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import dayjs from 'dayjs';
 
 
 function Carrera() {
@@ -151,9 +159,8 @@ function Carrera() {
         open={openCreate}
         onClose={cancelCreate}
       >
-        { }
         <DialogTitle id="alert-dialog-title">
-          { materiaSeleccionada.nombreMateria||"New Materia"}
+          {materiaSeleccionada.nombreMateria || "New Materia"}
         </DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
@@ -165,7 +172,80 @@ function Carrera() {
             label="Nombre"
             variant="outlined"
             defaultValue="New Materia"
-            onChange={(e) => { setMateriaSeleccionada({ ...materiaSeleccionada, nombreMateria: e.target.value }) }} />
+            onChange={(e) => { setMateriaSeleccionada({ ...materiaSeleccionada, nombreMateria: e.target.value }) }}
+          />
+
+          <Select
+            value={materiaSeleccionada.anio || "Seleccionar un anio"}
+            defaultValue={"Seleccionar un anio"}
+            onChange={(e) => { setMateriaSeleccionada({ ...materiaSeleccionada, anio: e.target.value }) }}
+            label="Anio">
+            <MenuItem value={""}>
+              <em>Seleccionar un valor</em>
+            </MenuItem>
+            <MenuItem value={1}>1</MenuItem>
+            <MenuItem value={2}>2</MenuItem>
+            <MenuItem value={3}>3</MenuItem>
+            <MenuItem value={4}>4</MenuItem>
+            <MenuItem value={5}>5</MenuItem>
+          </Select>
+
+          <Select
+            value={materiaSeleccionada.cuatrimestre || "Seleccionar un cuatrimestre"}
+            defaultValue={"Seleccionar un cuatrimestre"}
+            onChange={(e) => { setMateriaSeleccionada({ ...materiaSeleccionada, cuatrimestre: e.target.value }) }}
+            label="Cuatrimestre">
+            <MenuItem value={"1er Cuatrimestre"}>1er Cuatrimestre</MenuItem>
+            <MenuItem value={"2do Cuatrimestre"}>2do Cuatrimestre</MenuItem>
+            <MenuItem value={"Anual"}>Anual</MenuItem>
+          </Select>
+
+          <Select
+            value={materiaSeleccionada.estado || "Seleccionar un estado"}
+            defaultValue={"Seleccionar un estado"}
+            onChange={(e) => { setMateriaSeleccionada({ ...materiaSeleccionada, estado: e.target.value }) }}
+            label="Estado">
+            <MenuItem value={"Pendiente"}>Pendiente</MenuItem>
+            <MenuItem value={"Cursando"}>Cursando</MenuItem>
+            <MenuItem value={"Regular"}>Regular</MenuItem>
+            <MenuItem value={"Aprobado"}>Aprobado</MenuItem>
+            <MenuItem value={"Promocionado"}>Promocionado</MenuItem>
+          </Select>
+
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <DatePicker
+              label="Fecha Regularizacion"
+              value={dayjs(materiaSeleccionada.fechaRegularizacion)}
+              onChange={(newValue) => { setMateriaSeleccionada({ ...materiaSeleccionada, fechaRegularizacion: dayjs(newValue).toDate() }) }}
+            />
+            <DatePicker
+              label="Fecha Aprobación"
+              value={dayjs(materiaSeleccionada.fechaAprobacion)}
+              onChange={(newValue) => { setMateriaSeleccionada({ ...materiaSeleccionada, fechaAprobacion: dayjs(newValue).toDate() }) }}
+            />
+          </LocalizationProvider>
+
+          <TextField
+            id="materia-calificacion"
+            label="Calificacion"
+            variant="outlined"
+            type="number"
+            defaultValue=""
+            value={materiaSeleccionada.calificacion}
+            onChange={(e) => { setMateriaSeleccionada({ ...materiaSeleccionada, calificacion: e.target.value }) }}
+          />
+
+          <div>
+            <Checkbox
+              checked={materiaSeleccionada.requeridaPorTituloIntermedio || false}
+              onChange={(e) => { setMateriaSeleccionada({ ...materiaSeleccionada, requeridaPorTituloIntermedio: e.target.checked }) }}
+              inputProps={{ 'aria-label': 'controlled' }}
+            />
+            <div>requerido por titulo intermedio?</div>
+          </div>
+
+          <div>cargar correlativas</div>
+
         </DialogContent>
         <DialogActions>
           <Button onClick={cancelCreate}>
@@ -176,6 +256,7 @@ function Carrera() {
           </Button>
         </DialogActions>
       </Dialog>
+
       <Popover
         id={id}
         open={open}
@@ -192,10 +273,10 @@ function Carrera() {
       >
         {materiaSeleccionada?.correlativas?.length > 0
           ? materiaSeleccionada.correlativas
-              .map((corr) => (
-                <span key={corr.idMateria}>{corr.nombreMateria}</span>
-              ))
-              .reduce((prev, curr) => [prev, ", ", curr])
+            .map((corr) => (
+              <span key={corr.idMateria}>{corr.nombreMateria}</span>
+            ))
+            .reduce((prev, curr) => [prev, ", ", curr])
           : "Ninguna"}
       </Popover>
       <div className={styles.Body}>
@@ -228,8 +309,6 @@ function Carrera() {
 
               {/* Filas de datos */}
               {materias.map((materia) => {
-                console.log(materia);
-
                 return (
                   <div key={materia.idMateria} className={styles.dataRows}>
                     <div className={styles.singleData}>
@@ -269,7 +348,7 @@ function Carrera() {
                       </Button>
                     </div>
                     <div>
-                    <Button
+                      <Button
                         onClick={(e) => handleClickOpenEdit(e, materia)}
                       >
                         <Icon icon="mdi:pencil" width="24" height="24" />
@@ -279,12 +358,12 @@ function Carrera() {
                 )
               })}
               {/* fila de nueva materia */}
-              <div 
-                onClick={(e)=>{
-                  handleClickOpenCreate(e,materiaSeleccionada)
-                }}  
-              > 
-              <Icon icon="tabler:plus" width="24" height="24" /> Nueva Materia
+              <div
+                onClick={(e) => {
+                  handleClickOpenCreate(e, materiaSeleccionada)
+                }}
+              >
+                <Icon icon="tabler:plus" width="24" height="24" /> Nueva Materia
               </div>
             </div>
           </div>
