@@ -18,7 +18,6 @@ import TextField from '@mui/material/TextField';
 
 function Carrera() {
   const { slug } = useParams();
-  const { slug } = useParams();
 
   const [thisCarrera, setThisCarrera] = React.useState([]);
   const [materias, setMaterias] = React.useState([]);
