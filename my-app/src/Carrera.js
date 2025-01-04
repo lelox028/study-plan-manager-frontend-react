@@ -17,6 +17,10 @@ import TextField from '@mui/material/TextField';
 // Select imports
 import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
+// Select Correlativas import
+import FormControl from '@mui/material/FormControl';
+import InputLabel from '@mui/material/InputLabel';
+import OutlinedInput from '@mui/material/OutlinedInput';
 // Date picker
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -139,8 +143,14 @@ function Carrera() {
   };
 
   const succesCreate = () => {
+    const newMateria = { ...materiaSeleccionada, carrera: { id_C: thisCarrera.id_C } }
+    axios.post('http://localhost:8080/materias', newMateria)
+      .then((response) => {
+        console.log("resultado post:", response)
+      }).catch((error) => {
+        console.log("error al crear materia: ", error)
+      })
     setOpenCreate(false);
-    //axios.post materia
   };
 
   const cancelCreate = () => {
@@ -152,6 +162,19 @@ function Carrera() {
   React.useEffect(() => {
     console.log("materia seleccionada: ", materiaSeleccionada)
   }, [materiaSeleccionada])
+
+  const handleCorrelativasClick = (event) => {
+    const {
+      target: { value },
+    } = event;
+    setMateriaSeleccionada(
+      {
+        ...materiaSeleccionada,
+        correlativas:
+          typeof value.nombreMateria === 'string' ? value.split(',') : value,
+      }
+    );
+  };
 
   return (
     <>
@@ -244,7 +267,29 @@ function Carrera() {
             <div>requerido por titulo intermedio?</div>
           </div>
 
-          <div>cargar correlativas</div>
+          <div>
+            cargar correlativas
+            <FormControl sx={{ m: 1, width: 300 }}>
+              <InputLabel id="correlativas-label">Correlativas</InputLabel>
+              <Select
+
+                multiple
+                value={materiaSeleccionada.correlativas || []}
+                onChange={(e) => { handleCorrelativasClick(e) }}
+                input={<OutlinedInput label="Name" />}
+
+              >
+                {materias.map((materia) => (
+                  <MenuItem
+                    key={materia.idMateria}
+                    value={materia}
+                  >
+                    {materia.nombreMateria}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </div>
 
         </DialogContent>
         <DialogActions>
