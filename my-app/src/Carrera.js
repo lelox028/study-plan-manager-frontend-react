@@ -1,7 +1,7 @@
 import styles from "./dist/carrera.module.scss";
-import React from "react";
+import React, { forwardRef } from "react";
 import { useParams } from "react-router-dom";
-import { Container } from "@mui/material";
+import { Container, Slide } from "@mui/material";
 import axios from "axios";
 import { Popover } from "@mui/material";
 import Button from "@mui/material/Button";
@@ -27,7 +27,11 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs from "dayjs";
 
-function Carrera() {
+const Transition = forwardRef(function Transition(props, ref) {
+  return <Slide direction="left" ref={ref} {...props} />;
+});
+
+const Carrera = () => {
   const { slug } = useParams();
 
   const [thisCarrera, setThisCarrera] = React.useState([]);
@@ -193,6 +197,9 @@ function Carrera() {
         open={openCreate}
         onClose={cancelCreate}
         className={styles.newMateriaDialog}
+        TransitionComponent={Transition} // Usa la transición personalizada
+        keepMounted // Mejora el rendimiento al mantener el componente montado
+        aria-describedby="dialog-descripcion"
       >
         <DialogTitle id="alert-dialog-title">
           {materiaSeleccionada.nombreMateria || "Nueva Materia"}
@@ -207,7 +214,6 @@ function Carrera() {
             id="materia-nombre"
             label="Nombre"
             variant="outlined"
-            defaultValue="New Materia"
             onChange={(e) => {
               setMateriaSeleccionada({
                 ...materiaSeleccionada,
@@ -362,8 +368,8 @@ function Carrera() {
           </div>
         </DialogContent>
         <DialogActions>
-          <Button onClick={cancelCreate}>Cancelar</Button>
-          <Button onClick={succesCreate} autoFocus>
+          <Button variant="contained" color="error" onClick={cancelCreate}>Cancelar</Button>
+          <Button variant="contained" onClick={succesCreate} autoFocus>
             Aceptar
           </Button>
         </DialogActions>
