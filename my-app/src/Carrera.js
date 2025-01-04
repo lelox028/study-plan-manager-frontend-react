@@ -6,27 +6,26 @@ import axios from "axios";
 import { Popover } from "@mui/material";
 import Button from "@mui/material/Button";
 import { Icon } from "@iconify/react";
-import Checkbox from '@mui/material/Checkbox';
+import Checkbox from "@mui/material/Checkbox";
 // Dialog imports
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
-import DialogTitle from '@mui/material/DialogTitle';
-import TextField from '@mui/material/TextField';
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
+import TextField from "@mui/material/TextField";
 // Select imports
-import MenuItem from '@mui/material/MenuItem';
-import Select from '@mui/material/Select';
+import MenuItem from "@mui/material/MenuItem";
+import Select from "@mui/material/Select";
 // Select Correlativas import
-import FormControl from '@mui/material/FormControl';
-import InputLabel from '@mui/material/InputLabel';
-import OutlinedInput from '@mui/material/OutlinedInput';
+import FormControl from "@mui/material/FormControl";
+import InputLabel from "@mui/material/InputLabel";
+import OutlinedInput from "@mui/material/OutlinedInput";
 // Date picker
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import dayjs from 'dayjs';
-
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import dayjs from "dayjs";
 
 function Carrera() {
   const { slug } = useParams();
@@ -35,7 +34,6 @@ function Carrera() {
   const [materias, setMaterias] = React.useState([]);
   const [materiasAprobadas, setMateriasAprobadas] = React.useState([]);
   const [materiaSeleccionada, setMateriaSeleccionada] = React.useState({});
-
 
   React.useEffect(() => {
     // get Carrera Data
@@ -69,19 +67,15 @@ function Carrera() {
       .catch((error) => {
         console.error("Error al obtener las materias:", error);
       });
-
-
   }, []);
 
-
   /***********************************************************************************************
-  *    REVISAR CONDICION: que pasa si materias esta vacio cuando materias aprobadas se recibe?   *
-  ************************************************************************************************/
+   *    REVISAR CONDICION: que pasa si materias esta vacio cuando materias aprobadas se recibe?   *
+   ************************************************************************************************/
   React.useEffect(() => {
-    // Update estado in each materia once materiasAprobadas has been updated 
+    // Update estado in each materia once materiasAprobadas has been updated
     setMaterias(actualizarEstadoMaterias(materias, materiasAprobadas));
-  }, [materiasAprobadas])
-
+  }, [materiasAprobadas]);
 
   const [anchorEl, setAnchorEl] = React.useState(null);
 
@@ -121,10 +115,12 @@ function Carrera() {
         return { ...materia, estado: "Cursable" };
       } else {
         // Hay correlativas no aprobadas
-        const nombresNoAprobadas = correlativasNoAprobadas.map(correlativa => correlativa.nombreMateria);
+        const nombresNoAprobadas = correlativasNoAprobadas.map(
+          (correlativa) => correlativa.nombreMateria
+        );
         return {
           ...materia,
-          estado: `falta aprobar: ${nombresNoAprobadas.join(", ")}`
+          estado: `falta aprobar: ${nombresNoAprobadas.join(", ")}`,
         };
       }
     });
@@ -132,19 +128,20 @@ function Carrera() {
 
   // Edit logic
   const handleClickOpenEdit = (e, materia) => {
-    console.log("Abrir editar ", materia)
-  }
+    console.log("Abrir editar ", materia);
+  };
 
   // Delete Logic
-  const handleClickDelete = (e, materia)=>{
-    axios.delete('http://localhost:8080/materias/'+materia.idMateria)
-    .then((response)=>{
-      console.log("deleted: ",response)
-    })
-    .catch((error)=>{
-      console.log("error al borrar materia: ",error)
-    })
-  }
+  const handleClickDelete = (e, materia) => {
+    axios
+      .delete("http://localhost:8080/materias/" + materia.idMateria)
+      .then((response) => {
+        console.log("deleted: ", response);
+      })
+      .catch((error) => {
+        console.log("error al borrar materia: ", error);
+      });
+  };
 
   // CREATE Dialog Logic
   const [openCreate, setOpenCreate] = React.useState(false);
@@ -154,37 +151,40 @@ function Carrera() {
   };
 
   const succesCreate = () => {
-    const newMateria = { ...materiaSeleccionada, carrera: { id_C: thisCarrera.id_C } }
-    axios.post('http://localhost:8080/materias', newMateria)
+    const newMateria = {
+      ...materiaSeleccionada,
+      carrera: { id_C: thisCarrera.id_C },
+    };
+    axios
+      .post("http://localhost:8080/materias", newMateria)
       .then((response) => {
-        console.log("resultado post:", response)
-      }).catch((error) => {
-        console.log("error al crear materia: ", error)
+        console.log("resultado post:", response);
       })
+      .catch((error) => {
+        console.log("error al crear materia: ", error);
+      });
     setOpenCreate(false);
   };
 
   const cancelCreate = () => {
-    setMateriaSeleccionada({})
+    setMateriaSeleccionada({});
     setOpenCreate(false);
   };
 
   //watch materia seleccionada:
   React.useEffect(() => {
-    console.log("materia seleccionada: ", materiaSeleccionada)
-  }, [materiaSeleccionada])
+    console.log("materia seleccionada: ", materiaSeleccionada);
+  }, [materiaSeleccionada]);
 
   const handleCorrelativasClick = (event) => {
     const {
       target: { value },
     } = event;
-    setMateriaSeleccionada(
-      {
-        ...materiaSeleccionada,
-        correlativas:
-          typeof value.nombreMateria === 'string' ? value.split(',') : value,
-      }
-    );
+    setMateriaSeleccionada({
+      ...materiaSeleccionada,
+      correlativas:
+        typeof value.nombreMateria === "string" ? value.split(",") : value,
+    });
   };
 
   return (
@@ -192,70 +192,119 @@ function Carrera() {
       <Dialog
         open={openCreate}
         onClose={cancelCreate}
+        className={styles.newMateriaDialog}
       >
         <DialogTitle id="alert-dialog-title">
-          {materiaSeleccionada.nombreMateria || "New Materia"}
+          {materiaSeleccionada.nombreMateria || "Nueva Materia"}
         </DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
-            Here you can create a new materia... but you already knew that, lol.
+            Aquí puedes crear una nueva Materia
           </DialogContentText>
           {/* here goes inputfields */}
+
           <TextField
             id="materia-nombre"
             label="Nombre"
             variant="outlined"
             defaultValue="New Materia"
-            onChange={(e) => { setMateriaSeleccionada({ ...materiaSeleccionada, nombreMateria: e.target.value }) }}
+            onChange={(e) => {
+              setMateriaSeleccionada({
+                ...materiaSeleccionada,
+                nombreMateria: e.target.value,
+              });
+            }}
           />
 
-          <Select
-            value={materiaSeleccionada.anio || "Seleccionar un anio"}
-            defaultValue={"Seleccionar un anio"}
-            onChange={(e) => { setMateriaSeleccionada({ ...materiaSeleccionada, anio: e.target.value }) }}
-            label="Anio">
-            <MenuItem value={""}>
-              <em>Seleccionar un valor</em>
-            </MenuItem>
-            <MenuItem value={1}>1</MenuItem>
-            <MenuItem value={2}>2</MenuItem>
-            <MenuItem value={3}>3</MenuItem>
-            <MenuItem value={4}>4</MenuItem>
-            <MenuItem value={5}>5</MenuItem>
-          </Select>
+          <FormControl fullWidth>
+            <InputLabel id="demo-simple-select-label">Año</InputLabel>
 
-          <Select
-            value={materiaSeleccionada.cuatrimestre || "Seleccionar un cuatrimestre"}
-            defaultValue={"Seleccionar un cuatrimestre"}
-            onChange={(e) => { setMateriaSeleccionada({ ...materiaSeleccionada, cuatrimestre: e.target.value }) }}
-            label="Cuatrimestre">
-            <MenuItem value={"1er Cuatrimestre"}>1er Cuatrimestre</MenuItem>
-            <MenuItem value={"2do Cuatrimestre"}>2do Cuatrimestre</MenuItem>
-            <MenuItem value={"Anual"}>Anual</MenuItem>
-          </Select>
+            <Select
+              label="Año"
+              value={materiaSeleccionada.anio}
+              variant="outlined"
+              onChange={(e) => {
+                setMateriaSeleccionada({
+                  ...materiaSeleccionada,
+                  anio: e.target.value,
+                });
+              }}
+            >
+              <MenuItem value={""} disabled>
+                <em>Selecciona un valor</em>
+              </MenuItem>
+              <MenuItem value={1}>1</MenuItem>
+              <MenuItem value={2}>2</MenuItem>
+              <MenuItem value={3}>3</MenuItem>
+              <MenuItem value={4}>4</MenuItem>
+              <MenuItem value={5}>5</MenuItem>
+            </Select>
+          </FormControl>
 
-          <Select
-            value={materiaSeleccionada.estado || "Seleccionar un estado"}
-            defaultValue={"Seleccionar un estado"}
-            onChange={(e) => { setMateriaSeleccionada({ ...materiaSeleccionada, estado: e.target.value }) }}
-            label="Estado">
-            <MenuItem value={"Pendiente"}>Pendiente</MenuItem>
-            <MenuItem value={"Cursando"}>Cursando</MenuItem>
-            <MenuItem value={"Regular"}>Regular</MenuItem>
-            <MenuItem value={"Aprobado"}>Aprobado</MenuItem>
-            <MenuItem value={"Promocionado"}>Promocionado</MenuItem>
-          </Select>
+          <FormControl fullWidth>
+            <InputLabel id="demo-simple-select-label">Cuatrimestre</InputLabel>
+            <Select
+              value={materiaSeleccionada.cuatrimestre}
+              onChange={(e) => {
+                setMateriaSeleccionada({
+                  ...materiaSeleccionada,
+                  cuatrimestre: e.target.value,
+                });
+              }}
+              label="Cuatrimestre"
+            >
+              <MenuItem value={""} disabled>
+                <em>Selecciona un valor</em>
+              </MenuItem>
+              <MenuItem value={"1er Cuatrimestre"}>1er Cuatrimestre</MenuItem>
+              <MenuItem value={"2do Cuatrimestre"}>2do Cuatrimestre</MenuItem>
+              <MenuItem value={"Anual"}>Anual</MenuItem>
+            </Select>
+          </FormControl>
+
+          <FormControl fullWidth>
+            <InputLabel id="demo-simple-select-label">Estado</InputLabel>
+            <Select
+              value={materiaSeleccionada.estado}
+              onChange={(e) => {
+                setMateriaSeleccionada({
+                  ...materiaSeleccionada,
+                  estado: e.target.value,
+                });
+              }}
+              label="Estado"
+            >
+              <MenuItem value={""} disabled>
+                <em>Selecciona un valor</em>
+              </MenuItem>
+              <MenuItem value={"Pendiente"}>Pendiente</MenuItem>
+              <MenuItem value={"Cursando"}>Cursando</MenuItem>
+              <MenuItem value={"Regular"}>Regular</MenuItem>
+              <MenuItem value={"Aprobado"}>Aprobado</MenuItem>
+              <MenuItem value={"Promocionado"}>Promocionado</MenuItem>
+            </Select>
+          </FormControl>
 
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <DatePicker
               label="Fecha Regularizacion"
               value={dayjs(materiaSeleccionada.fechaRegularizacion)}
-              onChange={(newValue) => { setMateriaSeleccionada({ ...materiaSeleccionada, fechaRegularizacion: dayjs(newValue).toDate() }) }}
+              onChange={(newValue) => {
+                setMateriaSeleccionada({
+                  ...materiaSeleccionada,
+                  fechaRegularizacion: dayjs(newValue).toDate(),
+                });
+              }}
             />
             <DatePicker
               label="Fecha Aprobación"
               value={dayjs(materiaSeleccionada.fechaAprobacion)}
-              onChange={(newValue) => { setMateriaSeleccionada({ ...materiaSeleccionada, fechaAprobacion: dayjs(newValue).toDate() }) }}
+              onChange={(newValue) => {
+                setMateriaSeleccionada({
+                  ...materiaSeleccionada,
+                  fechaAprobacion: dayjs(newValue).toDate(),
+                });
+              }}
             />
           </LocalizationProvider>
 
@@ -266,47 +315,54 @@ function Carrera() {
             type="number"
             defaultValue=""
             value={materiaSeleccionada.calificacion}
-            onChange={(e) => { setMateriaSeleccionada({ ...materiaSeleccionada, calificacion: e.target.value }) }}
+            onChange={(e) => {
+              setMateriaSeleccionada({
+                ...materiaSeleccionada,
+                calificacion: e.target.value,
+              });
+            }}
           />
 
-          <div>
+          <div className={styles.checkboxTituloIntermedio}>
             <Checkbox
-              checked={materiaSeleccionada.requeridaPorTituloIntermedio || false}
-              onChange={(e) => { setMateriaSeleccionada({ ...materiaSeleccionada, requeridaPorTituloIntermedio: e.target.checked }) }}
-              inputProps={{ 'aria-label': 'controlled' }}
+              checked={
+                materiaSeleccionada.requeridaPorTituloIntermedio || false
+              }
+              onChange={(e) => {
+                setMateriaSeleccionada({
+                  ...materiaSeleccionada,
+                  requeridaPorTituloIntermedio: e.target.checked,
+                });
+              }}
+              inputProps={{ "aria-label": "controlled" }}
             />
-            <div>requerido por titulo intermedio?</div>
+            <div>¿Requerido por titulo intermedio?</div>
           </div>
 
-          <div>
-            cargar correlativas
+          <div className={styles.correlativas}>
+            Cargar correlativas
             <FormControl sx={{ m: 1, width: 300 }}>
               <InputLabel id="correlativas-label">Correlativas</InputLabel>
               <Select
-
+                label="Correlativas"
                 multiple
                 value={materiaSeleccionada.correlativas || []}
-                onChange={(e) => { handleCorrelativasClick(e) }}
-                input={<OutlinedInput label="Name" />}
-
+                onChange={(e) => {
+                  handleCorrelativasClick(e);
+                }}
+                input={<OutlinedInput label="Correlativas" />}
               >
                 {materias.map((materia) => (
-                  <MenuItem
-                    key={materia.idMateria}
-                    value={materia}
-                  >
+                  <MenuItem key={materia.idMateria} value={materia}>
                     {materia.nombreMateria}
                   </MenuItem>
                 ))}
               </Select>
             </FormControl>
           </div>
-
         </DialogContent>
         <DialogActions>
-          <Button onClick={cancelCreate}>
-            Cancelar
-          </Button>
+          <Button onClick={cancelCreate}>Cancelar</Button>
           <Button onClick={succesCreate} autoFocus>
             Aceptar
           </Button>
@@ -329,10 +385,10 @@ function Carrera() {
       >
         {materiaSeleccionada?.correlativas?.length > 0
           ? materiaSeleccionada.correlativas
-            .map((corr) => (
-              <span key={corr.idMateria}>{corr.nombreMateria}</span>
-            ))
-            .reduce((prev, curr) => [prev, ", ", curr])
+              .map((corr) => (
+                <span key={corr.idMateria}>{corr.nombreMateria}</span>
+              ))
+              .reduce((prev, curr) => [prev, ", ", curr])
           : "Ninguna"}
       </Popover>
       <div className={styles.Body}>
@@ -342,88 +398,82 @@ function Carrera() {
             <div className={styles.Right}>right</div>
           </Container>
         </div>
-        <Container maxWidth="lg">
-          <div className={styles.Main}>
-            <div className={styles.MainHeader}>
-              <h2>{thisCarrera.nombreC}</h2>
+        <div className={styles.Main}>
+          <div className={styles.MainHeader}>
+            <h2>{thisCarrera.nombreC}</h2>
+          </div>
+          <div className={styles.Table}>
+            {/* Encabezados */}
+            <div className={styles.tableHeaders}>
+              <div className={styles.singleHeader}> Materia</div>
+              <div className={styles.singleHeader}>Año</div>
+              <div className={styles.singleHeader}>Cuatrimestre</div>
+              <div className={styles.singleHeader}>Estado</div>
+              <div className={styles.singleHeader}>Fecha de Regularización</div>
+              <div className={styles.singleHeader}>Fecha de Aprobación</div>
+              <div className={styles.singleHeader}>Calificación</div>
+              <div className={styles.singleHeader}>Correlativas</div>
+              <div className={styles.singleHeader}>Eliminar</div>
             </div>
-            <div className={styles.Table}>
-              {/* Encabezados */}
-              <div className={styles.tableHeaders}>
-                <div className={styles.singleHeader}> Materia</div>
-                <div className={styles.singleHeader}>Año</div>
-                <div className={styles.singleHeader}>Cuatrimestre</div>
-                <div className={styles.singleHeader}>Estado</div>
-                <div className={styles.singleHeader}>
-                  Fecha de Regularización
-                </div>
-                <div className={styles.singleHeader}>Fecha de Aprobación</div>
-                <div className={styles.singleHeader}>Calificación</div>
-                <div className={styles.singleHeader}>Correlativas</div>
-                <div className={styles.singleHeader}>Editar</div>
-              </div>
 
-              {/* Filas de datos */}
-              {materias.map((materia) => {
-                return (
-                  <div key={materia.idMateria} className={styles.dataRows}>
-                    <div className={styles.singleData}>
-                      {materia.nombreMateria}
-                    </div>
-                    <div className={styles.singleData}>{materia.anio}</div>
-                    <div className={styles.singleData}>
-                      {materia.cuatrimestre}
-                    </div>
-                    <div className={styles.singleData}>
-                      {Array.isArray(materia.estado)
-                        ? `Falta aprobar: ${materia?.estado?.join(",")}`
-                        : materia.estado}
-                    </div>
-                    <div className={styles.singleData}>
-                      {materia.fechaRegularizacion
-                        ? materia.fechaRegularizacion
-                        : "N/A"}
-                    </div>
-                    <div className={styles.singleData}>
-                      {materia.fechaAprobacion
-                        ? materia.fechaAprobacion
-                        : "N/A"}
-                    </div>
-                    <div className={styles.singleData}>
-                      {materia.calificacion !== null
-                        ? materia.calificacion
-                        : "N/A"}
-                    </div>
-                    <div className={styles.singleData}>
-                      <Button
-                        aria-describedby={id}
-                        variant="contained"
-                        onClick={(e) => handleClick(e, materia)}
-                      >
-                        <Icon icon="mdi:eye" />
-                      </Button>
-                    </div>
-                    <div>
-                      <Button
-                        onClick={(e) => handleClickDelete(e, materia)}
-                      >
-                        <Icon icon="tabler:trash" width="24" height="24" />
-                      </Button>
-                    </div>
+            {/* Filas de datos */}
+            {materias.map((materia) => {
+              return (
+                <div key={materia.idMateria} className={styles.dataRows}>
+                  <div className={styles.singleData}>
+                    {materia.nombreMateria}
                   </div>
-                )
-              })}
-              {/* fila de nueva materia */}
-              <div
-                onClick={(e) => {
-                  handleClickOpenCreate(e, materiaSeleccionada)
-                }}
-              >
-                <Icon icon="tabler:plus" width="24" height="24" /> Nueva Materia
-              </div>
+                  <div className={styles.singleData}>{materia.anio}</div>
+                  <div className={styles.singleData}>
+                    {materia.cuatrimestre}
+                  </div>
+                  <div className={styles.singleData}>
+                    {Array.isArray(materia.estado)
+                      ? `Falta aprobar: ${materia?.estado?.join(",")}`
+                      : materia.estado}
+                  </div>
+                  <div className={styles.singleData}>
+                    {materia.fechaRegularizacion
+                      ? materia.fechaRegularizacion
+                      : "N/A"}
+                  </div>
+                  <div className={styles.singleData}>
+                    {materia.fechaAprobacion ? materia.fechaAprobacion : "N/A"}
+                  </div>
+                  <div className={styles.singleData}>
+                    {materia.calificacion !== null
+                      ? materia.calificacion
+                      : "N/A"}
+                  </div>
+                  <div className={styles.singleData}>
+                    <Button
+                      aria-describedby={id}
+                      variant="contained"
+                      onClick={(e) => handleClick(e, materia)}
+                      className={styles.correlativasButton}
+                    >
+                      <Icon icon="mdi:eye" />
+                    </Button>
+                  </div>
+                  <div className={styles.singleData}>
+                    <Button onClick={(e) => handleClickDelete(e, materia)}>
+                      <Icon icon="tabler:trash" width="24" height="24" />
+                    </Button>
+                  </div>
+                </div>
+              );
+            })}
+            {/* fila de nueva materia */}
+            <div
+              onClick={(e) => {
+                handleClickOpenCreate(e, materiaSeleccionada);
+              }}
+              className={styles.newMateria}
+            >
+              <Icon icon="tabler:plus" width="24" height="24" /> Nueva Materia
             </div>
           </div>
-        </Container>
+        </div>
       </div>
     </>
   );
