@@ -135,6 +135,17 @@ function Carrera() {
     console.log("Abrir editar ", materia)
   }
 
+  // Delete Logic
+  const handleClickDelete = (e, materia)=>{
+    axios.delete('http://localhost:8080/materias/'+materia.idMateria)
+    .then((response)=>{
+      console.log("deleted: ",response)
+    })
+    .catch((error)=>{
+      console.log("error al borrar materia: ",error)
+    })
+  }
+
   // CREATE Dialog Logic
   const [openCreate, setOpenCreate] = React.useState(false);
   const handleClickOpenCreate = (event, materia) => {
@@ -394,9 +405,9 @@ function Carrera() {
                     </div>
                     <div>
                       <Button
-                        onClick={(e) => handleClickOpenEdit(e, materia)}
+                        onClick={(e) => handleClickDelete(e, materia)}
                       >
-                        <Icon icon="mdi:pencil" width="24" height="24" />
+                        <Icon icon="tabler:trash" width="24" height="24" />
                       </Button>
                     </div>
                   </div>
