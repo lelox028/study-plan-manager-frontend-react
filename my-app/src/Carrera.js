@@ -34,13 +34,14 @@ const Transition = forwardRef(function Transition(props, ref) {
 const Carrera = () => {
   const { slug } = useParams();
 
+  // Use States
   const [thisCarrera, setThisCarrera] = React.useState([]);
   const [materias, setMaterias] = React.useState([]);
   const [materiasAprobadas, setMateriasAprobadas] = React.useState([]);
   const [materiaSeleccionada, setMateriaSeleccionada] = React.useState({});
 
-  React.useEffect(() => {
-    // get Carrera Data
+  // Requests functions
+  const getCarreraFromDatabase = () => {
     axios
       .get("http://localhost:8080/carreras/" + slug)
       .then((response) => {
@@ -50,7 +51,22 @@ const Carrera = () => {
       .catch((error) => {
         console.error("Error al obtener la carrera:", error);
       });
-    // get all materias for this carrera
+  };
+
+  const getMateriasAprobadasFromDatabase = () => {
+    axios
+      .get("http://localhost:8080/materias/carreras/" + slug + "/aprobadas")
+      .then((response) => {
+        console.log("Datos materias aprobadas recibidos: ", response.data);
+        setMateriasAprobadas(response.data);
+      })
+      .catch((error) => {
+        console.error("Error al obtener las materias aprobadas:", error);
+      });
+  };
+
+  //this function gets both materias and materias aprobadas.
+  const getAllMaterias = () => {
     axios
       .get("http://localhost:8080/materias/carreras/" + slug + "/materias")
       .then((response) => {
@@ -58,42 +74,44 @@ const Carrera = () => {
         setMaterias(response.data);
 
         //get all approved materias
-        axios
-          .get("http://localhost:8080/materias/carreras/" + slug + "/aprobadas")
-          .then((response) => {
-            console.log("Datos materias aprobadas recibidos: ", response.data);
-            setMateriasAprobadas(response.data);
-          })
-          .catch((error) => {
-            console.error("Error al obtener las materias aprobadas:", error);
-          });
+        getMateriasAprobadasFromDatabase();
       })
       .catch((error) => {
         console.error("Error al obtener las materias:", error);
       });
+  };
+
+  React.useEffect(() => {
+    // get all necesary data from database
+    getCarreraFromDatabase();
+    // get all materias for this carrera
+    getAllMaterias();
   }, []);
 
-  /***********************************************************************************************
-   *    REVISAR CONDICION: que pasa si materias esta vacio cuando materias aprobadas se recibe?   *
-   ************************************************************************************************/
+  // cuando el listado de materias aprobadas se actualice, se actualiza el estado de las correlativas para todas las materias.
   React.useEffect(() => {
-    // Update estado in each materia once materiasAprobadas has been updated
     setMaterias(actualizarEstadoMaterias(materias, materiasAprobadas));
   }, [materiasAprobadas]);
 
-  const [anchorEl, setAnchorEl] = React.useState(null);
 
-  const handleClick = (event, materia) => {
-    setMateriaSeleccionada(materia);
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-
-  const open = Boolean(anchorEl);
-  const id = open ? "simple-popover" : undefined;
+/******************************************************************************************/
+/***                         Documentar esto                                            ***/
+/******************************************************************************************/
+  const [anchorEl, setAnchorEl] = React.useState(null);                                 /**/
+                                                                                        /**/
+  const handleClick = (event, materia) => {                                             /**/
+    setMateriaSeleccionada(materia);                                                    /**/
+    setAnchorEl(event.currentTarget);                                                   /**/
+  };                                                                                    /**/
+                                                                                        /**/
+  const handleClose = () => {                                                           /**/
+    setAnchorEl(null);                                                                  /**/
+  };                                                                                    /**/  
+                                                                                        /**/
+  const open = Boolean(anchorEl);                                                       /**/
+  const id = open ? "simple-popover" : undefined;                                       /**/
+  /****************************************************************************************/
+  /****************************************************************************************/
 
   // Correlativas Logic
   function actualizarEstadoMaterias(materias, materiasAprobadas) {
@@ -141,6 +159,8 @@ const Carrera = () => {
       .delete("http://localhost:8080/materias/" + materia.idMateria)
       .then((response) => {
         console.log("deleted: ", response);
+        // Se vuelven a cargar las materias desde la database para actualizar la lista
+        getAllMaterias()
       })
       .catch((error) => {
         console.log("error al borrar materia: ", error);
@@ -163,6 +183,8 @@ const Carrera = () => {
       .post("http://localhost:8080/materias", newMateria)
       .then((response) => {
         console.log("resultado post:", response);
+        // Se vuelven a cargar las materias desde la database para actualizar la lista
+        getAllMaterias();
       })
       .catch((error) => {
         console.log("error al crear materia: ", error);
@@ -368,7 +390,9 @@ const Carrera = () => {
           </div>
         </DialogContent>
         <DialogActions>
-          <Button variant="contained" color="error" onClick={cancelCreate}>Cancelar</Button>
+          <Button variant="contained" color="error" onClick={cancelCreate}>
+            Cancelar
+          </Button>
           <Button variant="contained" onClick={succesCreate} autoFocus>
             Aceptar
           </Button>
@@ -483,6 +507,6 @@ const Carrera = () => {
       </div>
     </>
   );
-}
+};
 
 export default Carrera;
