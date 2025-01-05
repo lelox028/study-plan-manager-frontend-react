@@ -93,23 +93,23 @@ const Carrera = () => {
     setMaterias(actualizarEstadoMaterias(materias, materiasAprobadas));
   }, [materiasAprobadas]);
 
-
-/******************************************************************************************/
-/***                         Documentar esto                                            ***/
-/******************************************************************************************/
-  const [anchorEl, setAnchorEl] = React.useState(null);                                 /**/
-                                                                                        /**/
-  const handleClick = (event, materia) => {                                             /**/
-    setMateriaSeleccionada(materia);                                                    /**/
-    setAnchorEl(event.currentTarget);                                                   /**/
-  };                                                                                    /**/
-                                                                                        /**/
-  const handleClose = () => {                                                           /**/
-    setAnchorEl(null);                                                                  /**/
-  };                                                                                    /**/  
-                                                                                        /**/
-  const open = Boolean(anchorEl);                                                       /**/
-  const id = open ? "simple-popover" : undefined;                                       /**/
+  /******************************************************************************************/
+  /***                         Documentar esto                                            ***/
+  /******************************************************************************************/
+  const [anchorEl, setAnchorEl] = React.useState(null); 
+                                                                                          
+  const handleClick = (event, materia) => {
+    setMateriaSeleccionada(materia); 
+    setAnchorEl(event.currentTarget); 
+  }; 
+  
+  const handleClose = () => {
+    
+    setAnchorEl(null); 
+  }; 
+  
+  const open = Boolean(anchorEl); 
+  const id = open ? "simple-popover" : undefined; 
   /****************************************************************************************/
   /****************************************************************************************/
 
@@ -160,7 +160,7 @@ const Carrera = () => {
       .then((response) => {
         console.log("deleted: ", response);
         // Se vuelven a cargar las materias desde la database para actualizar la lista
-        getAllMaterias()
+        getAllMaterias();
       })
       .catch((error) => {
         console.log("error al borrar materia: ", error);
@@ -178,6 +178,10 @@ const Carrera = () => {
     const newMateria = {
       ...materiaSeleccionada,
       carrera: { id_C: thisCarrera.id_C },
+      // Se recorre el arreglo de correlativas y se descartan todos los campos que no son el id de la materia.
+      correlativas: materiaSeleccionada.correlativas.map((materia) => {
+        return { idMateria: materia.idMateria };
+      }),
     };
     axios
       .post("http://localhost:8080/materias", newMateria)
