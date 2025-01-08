@@ -162,11 +162,11 @@ $color4: #4A628A;
                 border-bottom: 1px solid #ccc;
                 background-color: $color1;
                 color: black;
-                background-color: $bg-dark;
+                background-color: $fg-primary;
             }
 
             & .newMateria:hover {
-                background-color: $bg-light;
+                background-color: $accent;
                 cursor: pointer;
             }
         }
