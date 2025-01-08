@@ -27,6 +27,9 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs from "dayjs";
 
+//import/export
+import ImportExport, { exportJSON, importJSON } from "./ImportExport";
+
 const Transition = forwardRef(function Transition(props, ref) {
   return <Slide direction="left" ref={ref} {...props} />;
 });
@@ -216,54 +219,12 @@ const Carrera = () => {
     });
   };
 
-  // JSON Export Logic:
-  const exportMateriasJSON = () => {
-    // simplifica el arreglo de materias para obtener un json mucho mas pequenio (sin enie)
-    const cleanMaterias = materias.map((materia) => {
-      console.log("materia: ", materia);
-     const {idMateria, ...cleanMateria}= materia;
-      return {
-        ...cleanMateria,
-        carrera: { id_C: thisCarrera.id_C },
-        correlativas: (cleanMateria.correlativas || []).map((materia) => {
-          return { idMateria: materia.idMateria };
-        }),
-      };
-    });
-    const dataStr = JSON.stringify(cleanMaterias, null, 2);
-    // crea el archivo de tipo application/json
-    const blob = new Blob([dataStr], { type: "application/json" });
-    // crea una url para el archivo y luego un link para descargarlo
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "materias.json";
-    // lo descarga automaticamente
-    a.click();
-    // libera la url
-    URL.revokeObjectURL(url);
-  };
-
-  // JSON Import Logic:
-  const importMateriasJSON = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        try {
-          const materiasImportadas = JSON.parse(e.target.result);
-          // validar con el usuario cuales materias importar
-          setMaterias((prevMaterias) => [
-            ...prevMaterias,
-            ...materiasImportadas,
-          ]);
-          // guardar en la base de datos
-        } catch (error) {
-          alert("Error al procesar el archivo JSON.");
-        }
-      };
-      reader.readAsText(file);
-    }
+  //json importexport
+  const handleImport = (importedData) => {
+    // momentaneamente, se agrega las materias importadas al listado de materias actuales
+    let importedMaterias =[...materias].concat(importedData)
+    setMaterias(importedMaterias);
+    // save to database
   };
 
   return (
@@ -557,28 +518,10 @@ const Carrera = () => {
               <Icon icon="tabler:plus" width="24" height="24" /> Nueva Materia
             </div>
           </div>
-          <div className={styles.ExportButton}>
-            <Button
-              variant="contained"
-              color="success"
-              onClick={exportMateriasJSON}
-            >
-              Exportar JSON
-            </Button>
-          </div>
-          <div className={styles.ImportButton}>
-            <input
-              accept="application/json"
-              id="contained-button-file"
-              type="file"
-              onChange={importMateriasJSON}
-            />
-            <label htmlFor="contained-button-file">
-              <Button variant="contained" component="span">
-                Importar JSON
-              </Button>
-            </label>
-          </div>
+          <ImportExport
+            onImport={handleImport}
+            dataToExport={{ materias: materias, carrera: thisCarrera }}
+          ></ImportExport>
         </div>
       </div>
     </>
