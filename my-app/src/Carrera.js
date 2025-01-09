@@ -221,9 +221,27 @@ const Carrera = () => {
 
   //json importexport
   const handleImport = (importedData) => {
-    // momentaneamente, se agrega las materias importadas al listado de materias actuales
-    let importedMaterias =[...materias].concat(importedData)
+    console.log("importedData: ", importedData);
+    if (importedData.carrera) {
+      // si trae carrera, se debe manejar ese caso. es decir, primero se guarda la universidad, luego la facultad y luego la carrera y finalmente las materias, dado que se requiere el id del paso anterior en cada save.
+      // save de importedData con axios al endpoint que procesa un import entero.
+    } else {
+      // se reemplaza la carrera de cada materia por la actual
+      importedData.materias = importedData.materias.map((materia) => {
+        return {
+          ...materia,
+          carrera: { id_C: thisCarrera.id_C },
+        };
+      });
+      // save de importedData.materias con axios al endpoint que procesa materias como batch.
+    }
+    /**************************************************************************************/
+    /* momentaneamente, se agrega las materias importadas al listado de materias actuales */
+    /**************************************************************************************/
+    let importedMaterias = [...materias].concat(importedData.materias);
     setMaterias(importedMaterias);
+    /**************************************************************************************/
+
     // save to database
   };
 
