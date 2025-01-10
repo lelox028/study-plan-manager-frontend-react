@@ -29,22 +29,44 @@ const ImportExport = ({ onImport, dataToExport }) => {
     setOpenImport(false);
   };
 
+  // funcion auxiliar para remover ids
+  const removeIds = (obj) => {
+    if (obj && typeof obj === "object") {
+      return Object.fromEntries(
+        Object.entries(obj)
+          .filter(([key]) => !key.startsWith("id_"))
+          .map(([key, value]) => [key, removeIds(value)])
+      );
+    } else return obj;
+  };
+
   // JSON Export Logic:
   const exportJSON = () => {
     // simplifica el arreglo de materias para obtener un json mucho mas pequenio (sin enie)
     const cleanMaterias = dataToExport.materias.map((materia) => {
       console.log("materia: ", materia);
-      const { idMateria, ...cleanMateria } = materia;
+      const { idMateria, carrera, ...cleanMateria } = materia;
       return {
         ...cleanMateria,
-        carrera: { id_C: null },
+        estado: /^(Cursando|Regular|Aprobado|Promocionado)$/.test(
+          cleanMateria.estado
+        )
+          ? cleanMateria.estado
+          : "Pendiente",
         correlativas: (cleanMateria.correlativas || []).map((materia) => {
           return { nombreMateria: materia.nombreMateria };
         }),
       };
     });
+
+    // procesa el objeto carrera para obtener un json mas pequenio
+    const cleanCarrera = removeIds(dataToExport.carrera);
     //exporta el objeto dataToExport, el cual contiene una arreglo de materias y un objeto carrrera que contiene carrera, facultad y universidad.
-    const dataStr = JSON.stringify({...dataToExport, materias:cleanMaterias}, null, 2);
+    const dataStr = JSON.stringify(
+      { carrera: cleanCarrera, materias: cleanMaterias },
+      null,
+      2
+    );
     // crea el archivo de tipo application/json
     const blob = new Blob([dataStr], { type: "application/json" });
     // crea una url para el archivo y luego un link para descargarlo
@@ -60,9 +82,9 @@ const ImportExport = ({ onImport, dataToExport }) => {
 
   // JSON Import Logic:
   const doImport = () => {
-    console.log("a",importCarrera,importCarrera? currentImportObj: {...currentImportObj, carrera:undefined})
-    importCarrera? onImport(currentImportObj): onImport({...currentImportObj, carrera:undefined});
-      
+    importCarrera
+      ? onImport(currentImportObj)
+      : onImport({ ...currentImportObj, carrera: undefined });
 
     //onImport(data); // Llama al callback para manejar los datos importados
   };

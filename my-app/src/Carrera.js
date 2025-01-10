@@ -27,6 +27,8 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs from "dayjs";
 
+import { useNavigate } from 'react-router-dom';
+
 //import/export
 import ImportExport, { exportJSON, importJSON } from "./ImportExport";
 
@@ -36,6 +38,7 @@ const Transition = forwardRef(function Transition(props, ref) {
 
 const Carrera = () => {
   const { slug } = useParams();
+  const navigate = useNavigate();
 
   // Use States
   const [thisCarrera, setThisCarrera] = React.useState([]);
@@ -219,12 +222,14 @@ const Carrera = () => {
     });
   };
 
-  //json importexport
+  // JSON import Logic
   const handleImport = (importedData) => {
     console.log("importedData: ", importedData);
     if (importedData.carrera) {
-      // si trae carrera, se debe manejar ese caso. es decir, primero se guarda la universidad, luego la facultad y luego la carrera y finalmente las materias, dado que se requiere el id del paso anterior en cada save.
-      // save de importedData con axios al endpoint que procesa un import entero.
+      axios.post("http://localhost:8080/carreras/import", importedData).then((response)=>{
+        //esto deberia ir dentro de un popup que te avise que se creo la carrera y si queres verla inmediatamente
+        navigate('/carrera/'+response.data.carrera.id_C, { replace: false });
+      })
     } else {
       // se reemplaza la carrera de cada materia por la actual
       importedData.materias = importedData.materias.map((materia) => {
@@ -233,7 +238,11 @@ const Carrera = () => {
           carrera: { id_C: thisCarrera.id_C },
         };
       });
-      // save de importedData.materias con axios al endpoint que procesa materias como batch.
+      axios.post("http://localhost:8080/materias/batch", importedData.materias)
+        .then((response)=>{
+          console.log("materias importadas: ", response);
+          getAllMaterias()
+        })
     }
     /**************************************************************************************/
     /* momentaneamente, se agrega las materias importadas al listado de materias actuales */
