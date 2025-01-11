@@ -181,8 +181,19 @@ const Carrera = () => {
         ? { ...m, [editingField.field]: newValue } // Guarda el nuevo valor
         : m
     );
+    
+    let updatedMateria = { ...materia, [editingField.field]: newValue };
+    
     setMaterias(updatedMaterias); // Actualiza el estado
     setEditingField({ id: null, field: null }); // Sale del modo edición
+    axios
+      .put(`http://localhost:8080/materias/${materia.idMateria}`,updatedMateria)
+      .then((response) => {
+        console.log("updated: ", response);
+      })
+      .catch((error) => {
+      console.log("error al actualizar materia: ", error);
+    })
   };
 
   // Delete Logic
@@ -595,10 +606,47 @@ const Carrera = () => {
                       materia.cuatrimestre
                     )}
                   </div>
-                  <div className={styles.singleData}>
-                    {Array.isArray(materia.estado)
-                      ? `Falta aprobar: ${materia?.estado?.join(",")}`
-                      : materia.estado}
+                  <div className={styles.singleData} onClick={(e) => handleClickEdit(e, materia, "estado")}>
+                  {editingField.id === materia.idMateria &&
+                    editingField.field === "estado" ? (
+                      <Select
+                        value={materia.estado || ""}
+                        onChange={(e) => {
+                          console.log(e.target);
+                          setInputValue(e.target.value); // Actualiza el inputValue
+                          handleSaveEditSelect(materia, e.target.value); // Guarda directamente
+                        }}
+                        label="Cuatrimestre"
+                        autoFocus
+                        onBlur={() =>
+                          setEditingField({ id: null, field: null })
+                        }
+                      >
+                        <MenuItem value={""} disabled>
+                          <em>Selecciona un valor</em>
+                        </MenuItem>
+                        <MenuItem value={"Cursando"}>
+                          Cursando
+                        </MenuItem>
+                        <MenuItem value={"Pendiente"}>
+                          Pendiente
+                        </MenuItem>
+                        <MenuItem value={"Regular"}>
+                          Regular
+                        </MenuItem>
+                        <MenuItem value={"Aprobado"}>
+                          Aprobado
+                        </MenuItem>
+                        <MenuItem value={"Promocionado"}>
+                          Promocionado
+                        </MenuItem>
+                      </Select>
+                    ) : (
+                      Array.isArray(materia.estado)
+                        ? `Falta aprobar: ${materia?.estado?.join(",")}`
+                        : materia.estado
+                    )}
+                    
                   </div>
                   <div
                     className={styles.singleData}
