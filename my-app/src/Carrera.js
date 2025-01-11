@@ -27,7 +27,7 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs from "dayjs";
 
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 
 //import/export
 import ImportExport, { exportJSON, importJSON } from "./ImportExport";
@@ -45,6 +45,11 @@ const Carrera = () => {
   const [materias, setMaterias] = React.useState([]);
   const [materiasAprobadas, setMateriasAprobadas] = React.useState([]);
   const [materiaSeleccionada, setMateriaSeleccionada] = React.useState({});
+  const [editingField, setEditingField] = React.useState({
+    id: null,
+    field: null,
+  });
+  const [inputValue, setInputValue] = React.useState("");
 
   // Requests functions
   const getCarreraFromDatabase = () => {
@@ -147,15 +152,37 @@ const Carrera = () => {
         );
         return {
           ...materia,
-          estado: `falta aprobar: ${nombresNoAprobadas.join(", ")}`,
+          estado: `Falta aprobar: ${nombresNoAprobadas.join(", ")}`,
         };
       }
     });
   }
 
-  // Edit logic
-  const handleClickOpenEdit = (e, materia) => {
-    console.log("Abrir editar ", materia);
+  const handleClickEdit = (e, materia, field) => {
+    e.stopPropagation();
+    setEditingField({ id: materia.idMateria, field });
+    setInputValue(materia[field]); // Inicializa con el valor actual
+  };
+
+  const handleSaveEdit = (materia) => {
+    // Acá se actualiza el estado global y se hace el PUT al backend
+    const updatedMaterias = materias.map((m) =>
+      m.idMateria === materia.idMateria
+        ? { ...m, [editingField.field]: inputValue }
+        : m
+    );
+    setMaterias(updatedMaterias);
+    setEditingField({ id: null, field: null });
+  };
+
+  const handleSaveEditSelect = (materia, newValue) => {    
+    const updatedMaterias = materias.map((m) =>
+      m.idMateria === materia.idMateria
+        ? { ...m, [editingField.field]: newValue } // Guarda el nuevo valor
+        : m
+    );
+    setMaterias(updatedMaterias); // Actualiza el estado
+    setEditingField({ id: null, field: null }); // Sale del modo edición
   };
 
   // Delete Logic
@@ -226,10 +253,14 @@ const Carrera = () => {
   const handleImport = (importedData) => {
     console.log("importedData: ", importedData);
     if (importedData.carrera) {
-      axios.post("http://localhost:8080/carreras/import", importedData).then((response)=>{
-        //esto deberia ir dentro de un popup que te avise que se creo la carrera y si queres verla inmediatamente
-        navigate('/carrera/'+response.data.carrera.id_C, { replace: false });
-      })
+      axios
+        .post("http://localhost:8080/carreras/import", importedData)
+        .then((response) => {
+          //esto deberia ir dentro de un popup que te avise que se creo la carrera y si queres verla inmediatamente
+          navigate("/carrera/" + response.data.carrera.id_C, {
+            replace: false,
+          });
+        });
     } else {
       // se reemplaza la carrera de cada materia por la actual
       importedData.materias = importedData.materias.map((materia) => {
@@ -238,11 +269,12 @@ const Carrera = () => {
           carrera: { id_C: thisCarrera.id_C },
         };
       });
-      axios.post("http://localhost:8080/materias/batch", importedData.materias)
-        .then((response)=>{
+      axios
+        .post("http://localhost:8080/materias/batch", importedData.materias)
+        .then((response) => {
           console.log("materias importadas: ", response);
-          getAllMaterias()
-        })
+          getAllMaterias();
+        });
     }
     /**************************************************************************************/
     /* momentaneamente, se agrega las materias importadas al listado de materias actuales */
@@ -489,35 +521,158 @@ const Carrera = () => {
             </div>
 
             {/* Filas de datos */}
-            {materias.map((materia) => {
+            {materias.map((materia, index) => {
               return (
                 <div key={materia.idMateria} className={styles.dataRows}>
-                  <div className={styles.singleData}>
-                    {materia.nombreMateria}
+                  <div
+                    className={styles.singleData}
+                    onClick={(e) =>
+                      handleClickEdit(e, materia, "nombreMateria")
+                    }
+                  >
+                    {editingField.id === materia.idMateria &&
+                    editingField.field === "nombreMateria" ? (
+                      <input
+                        type="text"
+                        value={inputValue}
+                        onChange={(e) => setInputValue(e.target.value)}
+                        onBlur={() => handleSaveEdit(materia)}
+                        autoFocus
+                      />
+                    ) : (
+                      materia.nombreMateria
+                    )}
                   </div>
-                  <div className={styles.singleData}>{materia.anio}</div>
-                  <div className={styles.singleData}>
-                    {materia.cuatrimestre}
+                  <div
+                    className={styles.singleData}
+                    onClick={(e) => handleClickEdit(e, materia, "anio")}
+                  >
+                    {editingField.id === materia.idMateria &&
+                    editingField.field === "anio" ? (
+                      <input
+                        type="number"
+                        value={inputValue || ''}
+                        onChange={(e) => setInputValue(e.target.value)}
+                        onBlur={() => handleSaveEdit(materia)}
+                        autoFocus
+                      />
+                    ) : (
+                      materia.anio
+                    )}
+                  </div>
+                  <div
+                    className={styles.singleData}
+                    onClick={(e) => handleClickEdit(e, materia, "cuatrimestre")}
+                  >
+                    {editingField.id === materia.idMateria &&
+                    editingField.field === "cuatrimestre" ? (
+                      <Select
+                        value={materia.cuatrimestre || ""}
+                        onChange={(e) => {
+                          console.log(e.target);
+
+                          setInputValue(e.target.value); // Actualiza el inputValue
+                          handleSaveEditSelect(materia, e.target.value); // Guarda directamente
+                        }}
+                        label="Cuatrimestre"
+                        autoFocus
+                        onBlur={() =>
+                          setEditingField({ id: null, field: null })
+                        }
+                      >
+                        <MenuItem value={""} disabled>
+                          <em>Selecciona un valor</em>
+                        </MenuItem>
+                        <MenuItem value={"1er Cuatrimestre"}>
+                          1er Cuatrimestre
+                        </MenuItem>
+                        <MenuItem value={"2do Cuatrimestre"}>
+                          2do Cuatrimestre
+                        </MenuItem>
+                        <MenuItem value={"Anual"}>Anual</MenuItem>
+                      </Select>
+                    ) : (
+                      materia.cuatrimestre
+                    )}
                   </div>
                   <div className={styles.singleData}>
                     {Array.isArray(materia.estado)
                       ? `Falta aprobar: ${materia?.estado?.join(",")}`
                       : materia.estado}
                   </div>
-                  <div className={styles.singleData}>
-                    {materia.fechaRegularizacion
-                      ? materia.fechaRegularizacion
-                      : "N/A"}
+                  <div
+                    className={styles.singleData}
+                    onClick={(e) =>
+                      handleClickEdit(e, materia, "fechaRegularizacion")
+                    }
+                  >
+                    {editingField.id === materia.idMateria &&
+                    editingField.field === "fechaRegularizacion" ? (
+                      <>
+                        <LocalizationProvider dateAdapter={AdapterDayjs}>
+                          <DatePicker
+                            label="Fecha Regularizacion"
+                            value={dayjs(materia.fechaRegularizacion)}
+                            onChange={(newValue) => {
+                              handleSaveEditSelect(materia, dayjs(newValue).toDate());
+                            }}
+                          />
+                        </LocalizationProvider>
+                      </>
+                    ) : materia.fechaRegularizacion ? (
+                      dayjs(materia.fechaRegularizacion).toString()
+                    ) : (
+                      "N/A"
+                    )}
                   </div>
-                  <div className={styles.singleData}>
-                    {materia.fechaAprobacion ? materia.fechaAprobacion : "N/A"}
+                  <div
+                    className={styles.singleData}
+                    onClick={(e) =>
+                      handleClickEdit(e, materia, "fechaAprobacion")
+                    }
+                  >
+                    {editingField.id === materia.idMateria &&
+                    editingField.field === "fechaAprobacion" ? (
+                      <>
+                        <LocalizationProvider dateAdapter={AdapterDayjs}>
+                          <DatePicker
+                            label="Fecha Aprobacion"
+                            value={dayjs(materia.fechaAprobacion)}
+                            onChange={(newValue) => {
+                              handleSaveEditSelect(materia, dayjs(newValue).toDate());
+                            }}
+                          />
+                        </LocalizationProvider>
+                      </>
+                    ) : materia.fechaAprobacion ? (
+                      dayjs(materia.fechaAprobacion).toString()
+                    ) : (
+                      "N/A"
+                    )}
                   </div>
-                  <div className={styles.singleData}>
-                    {materia.calificacion !== null
-                      ? materia.calificacion
-                      : "N/A"}
+                  <div
+                    className={styles.singleData}
+                    onClick={(e) => handleClickEdit(e, materia, "calificacion")}
+                  >
+                    {editingField.id === materia.idMateria &&
+                    editingField.field === "calificacion" ? (
+                      <input
+                        type="number"
+                        value={inputValue || ''}
+                        onChange={(e) => setInputValue(e.target.value)}
+                        onBlur={() => handleSaveEdit(materia)}
+                        autoFocus
+                      />
+                    ) : (
+                      materia.calificacion !== null
+                        ? materia.calificacion
+                        : "N/A"
+                    )}
                   </div>
-                  <div className={styles.singleData}>
+                  <div
+                    className={styles.singleData}
+                    onClick={(e) => handleClickEdit(e, materia)}
+                  >
                     <Button
                       aria-describedby={id}
                       variant="contained"
@@ -527,7 +682,10 @@ const Carrera = () => {
                       <Icon icon="mdi:eye" />
                     </Button>
                   </div>
-                  <div className={styles.singleData}>
+                  <div
+                    className={styles.singleData}
+                    onClick={(e) => handleClickEdit(e, materia)}
+                  >
                     <Button onClick={(e) => handleClickDelete(e, materia)}>
                       <Icon icon="tabler:trash" width="24" height="24" />
                     </Button>
