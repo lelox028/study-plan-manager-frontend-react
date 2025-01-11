@@ -14,12 +14,19 @@ $color4: #4A628A;
     }
 }
 
-:global(.MuiModal-root.MuiDialog-root) {
-    right: 0 !important;
-    left: unset;
-}
+// FRANCO: esta parte traia problemas asi que la movi a newMateriaDialog, revisar comentario
+// :global(.MuiModal-root.MuiDialog-root) {
+//     right: 0 !important;
+//     left: unset;
+// }
 
 .newMateriaDialog {
+    //fix para franco 
+    width: fit-content;
+    right: 0 !important;
+    left: unset !important;
+    //fin fix franco
+    
     & :global(.MuiDialog-container) {
         height: auto;
     }

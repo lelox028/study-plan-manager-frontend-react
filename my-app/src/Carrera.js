@@ -27,12 +27,18 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs from "dayjs";
 
+import { useNavigate } from 'react-router-dom';
+
+//import/export
+import ImportExport, { exportJSON, importJSON } from "./ImportExport";
+
 const Transition = forwardRef(function Transition(props, ref) {
   return <Slide direction="left" ref={ref} {...props} />;
 });
 
 const Carrera = () => {
   const { slug } = useParams();
+  const navigate = useNavigate();
 
   // Use States
   const [thisCarrera, setThisCarrera] = React.useState([]);
@@ -96,20 +102,19 @@ const Carrera = () => {
   /******************************************************************************************/
   /***                         Documentar esto                                            ***/
   /******************************************************************************************/
-  const [anchorEl, setAnchorEl] = React.useState(null); 
-                                                                                          
+  const [anchorEl, setAnchorEl] = React.useState(null);
+
   const handleClick = (event, materia) => {
-    setMateriaSeleccionada(materia); 
-    setAnchorEl(event.currentTarget); 
-  }; 
-  
+    setMateriaSeleccionada(materia);
+    setAnchorEl(event.currentTarget);
+  };
+
   const handleClose = () => {
-    
-    setAnchorEl(null); 
-  }; 
-  
-  const open = Boolean(anchorEl); 
-  const id = open ? "simple-popover" : undefined; 
+    setAnchorEl(null);
+  };
+
+  const open = Boolean(anchorEl);
+  const id = open ? "simple-popover" : undefined;
   /****************************************************************************************/
   /****************************************************************************************/
 
@@ -215,6 +220,38 @@ const Carrera = () => {
       correlativas:
         typeof value.nombreMateria === "string" ? value.split(",") : value,
     });
+  };
+
+  // JSON import Logic
+  const handleImport = (importedData) => {
+    console.log("importedData: ", importedData);
+    if (importedData.carrera) {
+      axios.post("http://localhost:8080/carreras/import", importedData).then((response)=>{
+        //esto deberia ir dentro de un popup que te avise que se creo la carrera y si queres verla inmediatamente
+        navigate('/carrera/'+response.data.carrera.id_C, { replace: false });
+      })
+    } else {
+      // se reemplaza la carrera de cada materia por la actual
+      importedData.materias = importedData.materias.map((materia) => {
+        return {
+          ...materia,
+          carrera: { id_C: thisCarrera.id_C },
+        };
+      });
+      axios.post("http://localhost:8080/materias/batch", importedData.materias)
+        .then((response)=>{
+          console.log("materias importadas: ", response);
+          getAllMaterias()
+        })
+    }
+    /**************************************************************************************/
+    /* momentaneamente, se agrega las materias importadas al listado de materias actuales */
+    /**************************************************************************************/
+    let importedMaterias = [...materias].concat(importedData.materias);
+    setMaterias(importedMaterias);
+    /**************************************************************************************/
+
+    // save to database
   };
 
   return (
@@ -425,6 +462,7 @@ const Carrera = () => {
               .reduce((prev, curr) => [prev, ", ", curr])
           : "Ninguna"}
       </Popover>
+
       <div className={styles.Body}>
         <div className={styles.TopBar}>
           <Container className={styles.TopBarContainer}>
@@ -507,6 +545,10 @@ const Carrera = () => {
               <Icon icon="tabler:plus" width="24" height="24" /> Nueva Materia
             </div>
           </div>
+          <ImportExport
+            onImport={handleImport}
+            dataToExport={{ materias: materias, carrera: thisCarrera }}
+          ></ImportExport>
         </div>
       </div>
     </>
