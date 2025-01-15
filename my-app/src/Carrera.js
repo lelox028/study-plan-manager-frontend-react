@@ -711,8 +711,8 @@ const Carrera = () => {
                         <MenuItem value={""} disabled>
                           <em>Selecciona un valor</em>
                         </MenuItem>
-                        <MenuItem value={"Cursando"}>Cursando</MenuItem>
                         <MenuItem value={"Pendiente"}>Pendiente</MenuItem>
+                        <MenuItem value={"Cursando"}>Cursando</MenuItem>
                         <MenuItem value={"Regular"}>Regular</MenuItem>
                         <MenuItem value={"Aprobado"}>Aprobado</MenuItem>
                         <MenuItem value={"Promocionado"}>Promocionado</MenuItem>
