@@ -224,13 +224,6 @@ const Carrera = () => {
   };
 
   const handleSaveEdit = (materia) => {
-    // Acá se actualiza el estado global y se hace el PUT al backend
-    /* const updatedMaterias = materias.map((m) =>
-      m.idMateria === materia.idMateria
-        ? { ...m, [editingField.field]: inputValue }
-        : m
-    ); */
-    // setMaterias(updatedMaterias);
     let newMateria = materias.find((m) => {
       return m.idMateria === materia.idMateria;
     });
@@ -251,16 +244,18 @@ const Carrera = () => {
     updateMateria(newMateria);
   };
 
-  const handleSaveEditSelect = (materia, newValue) => {
-    const updatedMaterias = materias.map((m) =>
-      m.idMateria === materia.idMateria
-        ? { ...m, [editingField.field]: newValue } // Guarda el nuevo valor
-        : m
-    );
+  const handleSaveEditSelect = (materia, newValue) => {    
 
-    let updatedMateria = { ...materia, [editingField.field]: newValue };
-
-    setMaterias(updatedMaterias); // Actualiza el estado
+    let updatedMateria = {
+      ...materia,
+      [editingField.field]: newValue,
+      
+      correlativas: (materia.correlativas || []).map((item) => {
+        return { idMateria: item.idMateria };
+      }),
+      carrera: { id_C: materia.carrera.id_C },
+    };    
+   
     setEditingField({ id: null, field: null }); // Sale del modo edición
 
     updateMateria(updatedMateria);
@@ -283,8 +278,6 @@ const Carrera = () => {
         return { idMateria: item.idMateria };
       }),
     };
-
-    console.log(materia);
 
     updateMateria(materia);
   };
