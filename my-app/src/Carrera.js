@@ -122,6 +122,18 @@ const Carrera = () => {
       });
   };
 
+  const updateMateria = (materia) => {
+    axios
+      .put(`http://localhost:8080/materias/${materia.idMateria}`, materia)
+      .then((response) => {
+        console.log("updated: ", response);
+        getAllMaterias();
+      })
+      .catch((error) => {
+        console.log("error al actualizar materia: ", error);
+      });
+  };
+
   /******************************************************************************************/
   /*                                UseEffects Section                                      */
   /******************************************************************************************/
@@ -213,22 +225,30 @@ const Carrera = () => {
 
   const handleSaveEdit = (materia) => {
     // Acá se actualiza el estado global y se hace el PUT al backend
-    const updatedMaterias = materias.map((m) =>
+    /* const updatedMaterias = materias.map((m) =>
       m.idMateria === materia.idMateria
         ? { ...m, [editingField.field]: inputValue }
         : m
-    );
-    setMaterias(updatedMaterias);
+    ); */
+    // setMaterias(updatedMaterias);
+    let newMateria = materias.find((m) => {
+      return m.idMateria === materia.idMateria;
+    });
+    newMateria = {
+      ...newMateria,
+      [editingField.field]: inputValue,
+      estado: /^(Cursando|Regular|Aprobado|Promocionado)$/.test(materia.estado)
+        ? materia.estado
+        : "Pendiente",
+      correlativas: (materia.correlativas || []).map((item) => {
+        return { idMateria: item.idMateria };
+      }),
+      carrera: { id_C: newMateria.carrera.id_C },
+    };
+
     setEditingField({ id: null, field: null });
-    axios
-      .put(`http://localhost:8080/materias/${materia.idMateria}`, materia)
-      .then((response) => {
-        console.log("updated: ", response);
-        getAllMaterias();
-      })
-      .catch((error) => {
-        console.log("error al actualizar materia: ", error);
-      });
+
+    updateMateria(newMateria);
   };
 
   const handleSaveEditSelect = (materia, newValue) => {
@@ -242,18 +262,8 @@ const Carrera = () => {
 
     setMaterias(updatedMaterias); // Actualiza el estado
     setEditingField({ id: null, field: null }); // Sale del modo edición
-    axios
-      .put(
-        `http://localhost:8080/materias/${materia.idMateria}`,
-        updatedMateria
-      )
-      .then((response) => {
-        console.log("updated: ", response);
-        getAllMaterias();
-      })
-      .catch((error) => {
-        console.log("error al actualizar materia: ", error);
-      });
+
+    updateMateria(updatedMateria);
   };
 
   const handleSaveCorrelativas = (materia) => {
@@ -276,15 +286,7 @@ const Carrera = () => {
 
     console.log(materia);
 
-    axios
-      .put(`http://localhost:8080/materias/${materia.idMateria}`, materia)
-      .then((response) => {
-        console.log("updated: ", response);
-        getAllMaterias();
-      })
-      .catch((error) => {
-        console.log("error al actualizar materia: ", error);
-      });
+    updateMateria(materia);
   };
 
   /******************************************************************************************/
