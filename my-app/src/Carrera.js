@@ -40,7 +40,9 @@ const Carrera = () => {
   const { slug } = useParams();
   const navigate = useNavigate();
 
-  // Use States
+  /******************************************************************************************/
+  /*                                    Use States                                          */
+  /******************************************************************************************/
   const [thisCarrera, setThisCarrera] = React.useState([]);
   const [materias, setMaterias] = React.useState([]);
   const [materiasAprobadas, setMateriasAprobadas] = React.useState([]);
@@ -51,7 +53,9 @@ const Carrera = () => {
   });
   const [inputValue, setInputValue] = React.useState("");
 
-  // Requests functions
+  /******************************************************************************************/
+  /*                                  Requests Section                                      */
+  /******************************************************************************************/
   const getCarreraFromDatabase = () => {
     axios
       .get("http://localhost:8080/carreras/" + slug)
@@ -92,6 +96,35 @@ const Carrera = () => {
       });
   };
 
+  const deleteMateriaById = (materia) => {
+    axios
+      .delete("http://localhost:8080/materias/" + materia.idMateria)
+      .then((response) => {
+        console.log("deleted: ", response);
+        // Se vuelven a cargar las materias desde la database para actualizar la lista
+        getAllMaterias();
+      })
+      .catch((error) => {
+        console.log("error al borrar materia: ", error);
+      });
+  };
+
+  const createMateria = (materia) => {
+    axios
+      .post("http://localhost:8080/materias", materia)
+      .then((response) => {
+        console.log("resultado post:", response);
+        // Se vuelven a cargar las materias desde la database para actualizar la lista
+        getAllMaterias();
+      })
+      .catch((error) => {
+        console.log("error al crear materia: ", error);
+      });
+  };
+
+  /******************************************************************************************/
+  /*                                UseEffects Section                                      */
+  /******************************************************************************************/
   React.useEffect(() => {
     // get all necesary data from database
     getCarreraFromDatabase();
@@ -104,8 +137,13 @@ const Carrera = () => {
     setMaterias(actualizarEstadoMaterias(materias, materiasAprobadas));
   }, [materiasAprobadas]);
 
+  //watch materia seleccionada:
+  React.useEffect(() => {
+    console.log("materia seleccionada: ", materiaSeleccionada);
+  }, [materiaSeleccionada]);
+
   /******************************************************************************************/
-  /***                         Documentar esto                                            ***/
+  /*                                 Documentar esto                                        */
   /******************************************************************************************/
   const [anchorEl, setAnchorEl] = React.useState(null);
 
@@ -117,16 +155,18 @@ const Carrera = () => {
   const handleClose = (e) => {
     setAnchorEl(null);
     console.log(e);
-    
-    handleSaveCorrelativas(materiaSeleccionada)
-    };
+
+    handleSaveCorrelativas(materiaSeleccionada);
+  };
 
   const open = Boolean(anchorEl);
   const id = open ? "simple-popover" : undefined;
   /****************************************************************************************/
   /****************************************************************************************/
 
-  // Correlativas Logic
+  /******************************************************************************************/
+  /*                                  Correlativas Section                                  */
+  /******************************************************************************************/
   function actualizarEstadoMaterias(materias, materiasAprobadas) {
     // Obtener los IDs de las materias aprobadas
     const idsMateriasAprobadas = new Set(
@@ -160,6 +200,10 @@ const Carrera = () => {
       }
     });
   }
+
+  /******************************************************************************************/
+  /*                                  Edits  Section                                        */
+  /******************************************************************************************/
 
   const handleClickEdit = (e, materia, field) => {
     e.stopPropagation();
@@ -213,33 +257,27 @@ const Carrera = () => {
   };
 
   const handleSaveCorrelativas = (materia) => {
-    const updatedMaterias = materias.map((m) => 
+    const updatedMaterias = materias.map((m) =>
       m.idMateria === materia.idMateria
-      ? { ...m, correlativas: materia.correlativas } 
-      : m
-    )
-    
+        ? { ...m, correlativas: materia.correlativas }
+        : m
+    );
 
     setMaterias(updatedMaterias); // Actualiza el estado
     materia = {
       ...materia,
-      estado: /^(Cursando|Regular|Aprobado|Promocionado)$/.test(
-        materia.estado
-      )
+      estado: /^(Cursando|Regular|Aprobado|Promocionado)$/.test(materia.estado)
         ? materia.estado
         : "Pendiente",
       correlativas: (materia.correlativas || []).map((item) => {
         return { idMateria: item.idMateria };
       }),
-    }
+    };
 
     console.log(materia);
-    
+
     axios
-      .put(
-        `http://localhost:8080/materias/${materia.idMateria}`,
-        materia
-      )
+      .put(`http://localhost:8080/materias/${materia.idMateria}`, materia)
       .then((response) => {
         console.log("updated: ", response);
         getAllMaterias();
@@ -249,21 +287,17 @@ const Carrera = () => {
       });
   };
 
-  // Delete Logic
+  /******************************************************************************************/
+  /*                                  Deletes  Section                                      */
+  /******************************************************************************************/
   const handleClickDelete = (e, materia) => {
-    axios
-      .delete("http://localhost:8080/materias/" + materia.idMateria)
-      .then((response) => {
-        console.log("deleted: ", response);
-        // Se vuelven a cargar las materias desde la database para actualizar la lista
-        getAllMaterias();
-      })
-      .catch((error) => {
-        console.log("error al borrar materia: ", error);
-      });
+    deleteMateriaById(materia);
   };
 
-  // CREATE Dialog Logic
+  /******************************************************************************************/
+  /*                                  Creates  Section                                      */
+  /******************************************************************************************/
+
   const [openCreate, setOpenCreate] = React.useState(false);
   const handleClickOpenCreate = (event, materia) => {
     setMateriaSeleccionada({});
@@ -279,28 +313,14 @@ const Carrera = () => {
         return { idMateria: materia.idMateria };
       }),
     };
-    axios
-      .post("http://localhost:8080/materias", newMateria)
-      .then((response) => {
-        console.log("resultado post:", response);
-        // Se vuelven a cargar las materias desde la database para actualizar la lista
-        getAllMaterias();
-      })
-      .catch((error) => {
-        console.log("error al crear materia: ", error);
-      });
+    createMateria(newMateria);
     setOpenCreate(false);
-  }
+  };
 
   const cancelCreate = () => {
     setMateriaSeleccionada({});
     setOpenCreate(false);
   };
-
-  //watch materia seleccionada:
-  React.useEffect(() => {
-    console.log("materia seleccionada: ", materiaSeleccionada);
-  }, [materiaSeleccionada]);
 
   const handleCorrelativasClick = (event) => {
     const {
@@ -312,6 +332,10 @@ const Carrera = () => {
         typeof value.nombreMateria === "string" ? value.split(",") : value,
     });
   };
+
+  /******************************************************************************************/
+  /*                                  Import/Export  Section                                */
+  /******************************************************************************************/
 
   // JSON import Logic
   const handleImport = (importedData) => {
@@ -551,23 +575,23 @@ const Carrera = () => {
         }}
       >
         <FormControl sx={{ m: 1, width: 300 }}>
-              <InputLabel id="correlativas-label">Correlativas</InputLabel>
-              <Select
-                label="Correlativas"
-                multiple
-                value={materiaSeleccionada.correlativas || []}
-                onChange={(e) => {
-                  handleCorrelativasClick(e);
-                }}
-                input={<OutlinedInput label="Correlativas" />}
-              >
-                {materias.map((materia) => (
-                  <MenuItem key={materia.idMateria} value={materia}>
-                    {materia.nombreMateria}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
+          <InputLabel id="correlativas-label">Correlativas</InputLabel>
+          <Select
+            label="Correlativas"
+            multiple
+            value={materiaSeleccionada.correlativas || []}
+            onChange={(e) => {
+              handleCorrelativasClick(e);
+            }}
+            input={<OutlinedInput label="Correlativas" />}
+          >
+            {materias.map((materia) => (
+              <MenuItem key={materia.idMateria} value={materia}>
+                {materia.nombreMateria}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
       </Popover>
 
       <div className={styles.Body}>
