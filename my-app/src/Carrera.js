@@ -235,18 +235,18 @@ const Carrera = () => {
 
     console.log(materia);
     
-    // axios
-    //   .put(
-    //     `http://localhost:8080/materias/${materia.idMateria}`,
-    //     materia
-    //   )
-    //   .then((response) => {
-    //     console.log("updated: ", response);
-    //     getAllMaterias();
-    //   })
-    //   .catch((error) => {
-    //     console.log("error al actualizar materia: ", error);
-    //   });
+    axios
+      .put(
+        `http://localhost:8080/materias/${materia.idMateria}`,
+        materia
+      )
+      .then((response) => {
+        console.log("updated: ", response);
+        getAllMaterias();
+      })
+      .catch((error) => {
+        console.log("error al actualizar materia: ", error);
+      });
   };
 
   // Delete Logic
