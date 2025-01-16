@@ -358,14 +358,6 @@ const Carrera = () => {
           getAllMaterias();
         });
     }
-    /**************************************************************************************/
-    /* momentaneamente, se agrega las materias importadas al listado de materias actuales */
-    /**************************************************************************************/
-    let importedMaterias = [...materias].concat(importedData.materias);
-    setMaterias(importedMaterias);
-    /**************************************************************************************/
-
-    // save to database
   };
 
   /******************************************************************************************/
