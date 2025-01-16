@@ -27,7 +27,7 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs from "dayjs";
 
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 
 //import/export
 import ImportExport, { exportJSON, importJSON } from "./ImportExport";
@@ -40,13 +40,22 @@ const Carrera = () => {
   const { slug } = useParams();
   const navigate = useNavigate();
 
-  // Use States
+  /******************************************************************************************/
+  /*                                    Use States                                          */
+  /******************************************************************************************/
   const [thisCarrera, setThisCarrera] = React.useState([]);
   const [materias, setMaterias] = React.useState([]);
   const [materiasAprobadas, setMateriasAprobadas] = React.useState([]);
   const [materiaSeleccionada, setMateriaSeleccionada] = React.useState({});
+  const [editingField, setEditingField] = React.useState({
+    id: null,
+    field: null,
+  });
+  const [inputValue, setInputValue] = React.useState("");
 
-  // Requests functions
+  /******************************************************************************************/
+  /*                                  Requests Section                                      */
+  /******************************************************************************************/
   const getCarreraFromDatabase = () => {
     axios
       .get("http://localhost:8080/carreras/" + slug)
@@ -87,6 +96,47 @@ const Carrera = () => {
       });
   };
 
+  const deleteMateriaById = (materia) => {
+    axios
+      .delete("http://localhost:8080/materias/" + materia.idMateria)
+      .then((response) => {
+        console.log("deleted: ", response);
+        // Se vuelven a cargar las materias desde la database para actualizar la lista
+        getAllMaterias();
+      })
+      .catch((error) => {
+        console.log("error al borrar materia: ", error);
+      });
+  };
+
+  const createMateria = (materia) => {
+    axios
+      .post("http://localhost:8080/materias", materia)
+      .then((response) => {
+        console.log("resultado post:", response);
+        // Se vuelven a cargar las materias desde la database para actualizar la lista
+        getAllMaterias();
+      })
+      .catch((error) => {
+        console.log("error al crear materia: ", error);
+      });
+  };
+
+  const updateMateria = (materia) => {
+    axios
+      .put(`http://localhost:8080/materias/${materia.idMateria}`, materia)
+      .then((response) => {
+        console.log("updated: ", response);
+        getAllMaterias();
+      })
+      .catch((error) => {
+        console.log("error al actualizar materia: ", error);
+      });
+  };
+
+  /******************************************************************************************/
+  /*                                UseEffects Section                                      */
+  /******************************************************************************************/
   React.useEffect(() => {
     // get all necesary data from database
     getCarreraFromDatabase();
@@ -99,18 +149,26 @@ const Carrera = () => {
     setMaterias(actualizarEstadoMaterias(materias, materiasAprobadas));
   }, [materiasAprobadas]);
 
+  //watch materia seleccionada:
+  React.useEffect(() => {
+    console.log("materia seleccionada: ", materiaSeleccionada);
+  }, [materiaSeleccionada]);
+
   /******************************************************************************************/
-  /***                         Documentar esto                                            ***/
+  /*                                 Documentar esto                                        */
   /******************************************************************************************/
   const [anchorEl, setAnchorEl] = React.useState(null);
 
-  const handleClick = (event, materia) => {
+  const handleClickCorrelativas = (event, materia) => {
     setMateriaSeleccionada(materia);
     setAnchorEl(event.currentTarget);
   };
 
-  const handleClose = () => {
+  const handleClose = (e) => {
     setAnchorEl(null);
+    console.log(e);
+
+    handleSaveCorrelativas(materiaSeleccionada);
   };
 
   const open = Boolean(anchorEl);
@@ -118,7 +176,9 @@ const Carrera = () => {
   /****************************************************************************************/
   /****************************************************************************************/
 
-  // Correlativas Logic
+  /******************************************************************************************/
+  /*                                  Correlativas Section                                  */
+  /******************************************************************************************/
   function actualizarEstadoMaterias(materias, materiasAprobadas) {
     // Obtener los IDs de las materias aprobadas
     const idsMateriasAprobadas = new Set(
@@ -147,32 +207,92 @@ const Carrera = () => {
         );
         return {
           ...materia,
-          estado: `falta aprobar: ${nombresNoAprobadas.join(", ")}`,
+          estado: `Falta aprobar: ${nombresNoAprobadas.join(", ")}`,
         };
       }
     });
   }
 
-  // Edit logic
-  const handleClickOpenEdit = (e, materia) => {
-    console.log("Abrir editar ", materia);
+  /******************************************************************************************/
+  /*                                  Edits  Section                                        */
+  /******************************************************************************************/
+
+  const handleClickEdit = (e, materia, field) => {
+    e.stopPropagation();
+    setEditingField({ id: materia.idMateria, field });
+    setInputValue(materia[field]); // Inicializa con el valor actual
   };
 
-  // Delete Logic
+  const handleSaveEdit = (materia) => {
+    let newMateria = materias.find((m) => {
+      return m.idMateria === materia.idMateria;
+    });
+    newMateria = {
+      ...newMateria,
+      [editingField.field]: inputValue,
+      estado: /^(Cursando|Regular|Aprobado|Promocionado)$/.test(materia.estado)
+        ? materia.estado
+        : "Pendiente",
+      correlativas: (materia.correlativas || []).map((item) => {
+        return { idMateria: item.idMateria };
+      }),
+      carrera: { id_C: newMateria.carrera.id_C },
+    };
+
+    setEditingField({ id: null, field: null });
+
+    updateMateria(newMateria);
+  };
+
+  const handleSaveEditSelect = (materia, newValue) => {    
+
+    let updatedMateria = {
+      ...materia,
+      [editingField.field]: newValue,
+      
+      correlativas: (materia.correlativas || []).map((item) => {
+        return { idMateria: item.idMateria };
+      }),
+      carrera: { id_C: materia.carrera.id_C },
+    };    
+   
+    setEditingField({ id: null, field: null }); // Sale del modo edición
+
+    updateMateria(updatedMateria);
+  };
+
+  const handleSaveCorrelativas = (materia) => {
+    const updatedMaterias = materias.map((m) =>
+      m.idMateria === materia.idMateria
+        ? { ...m, correlativas: materia.correlativas }
+        : m
+    );
+
+    setMaterias(updatedMaterias); // Actualiza el estado
+    materia = {
+      ...materia,
+      estado: /^(Cursando|Regular|Aprobado|Promocionado)$/.test(materia.estado)
+        ? materia.estado
+        : "Pendiente",
+      correlativas: (materia.correlativas || []).map((item) => {
+        return { idMateria: item.idMateria };
+      }),
+    };
+
+    updateMateria(materia);
+  };
+
+  /******************************************************************************************/
+  /*                                  Deletes  Section                                      */
+  /******************************************************************************************/
   const handleClickDelete = (e, materia) => {
-    axios
-      .delete("http://localhost:8080/materias/" + materia.idMateria)
-      .then((response) => {
-        console.log("deleted: ", response);
-        // Se vuelven a cargar las materias desde la database para actualizar la lista
-        getAllMaterias();
-      })
-      .catch((error) => {
-        console.log("error al borrar materia: ", error);
-      });
+    deleteMateriaById(materia);
   };
 
-  // CREATE Dialog Logic
+  /******************************************************************************************/
+  /*                                  Creates  Section                                      */
+  /******************************************************************************************/
+
   const [openCreate, setOpenCreate] = React.useState(false);
   const handleClickOpenCreate = (event, materia) => {
     setMateriaSeleccionada({});
@@ -188,16 +308,7 @@ const Carrera = () => {
         return { idMateria: materia.idMateria };
       }),
     };
-    axios
-      .post("http://localhost:8080/materias", newMateria)
-      .then((response) => {
-        console.log("resultado post:", response);
-        // Se vuelven a cargar las materias desde la database para actualizar la lista
-        getAllMaterias();
-      })
-      .catch((error) => {
-        console.log("error al crear materia: ", error);
-      });
+    createMateria(newMateria);
     setOpenCreate(false);
   };
 
@@ -205,11 +316,6 @@ const Carrera = () => {
     setMateriaSeleccionada({});
     setOpenCreate(false);
   };
-
-  //watch materia seleccionada:
-  React.useEffect(() => {
-    console.log("materia seleccionada: ", materiaSeleccionada);
-  }, [materiaSeleccionada]);
 
   const handleCorrelativasClick = (event) => {
     const {
@@ -222,14 +328,22 @@ const Carrera = () => {
     });
   };
 
+  /******************************************************************************************/
+  /*                                  Import/Export  Section                                */
+  /******************************************************************************************/
+
   // JSON import Logic
   const handleImport = (importedData) => {
     console.log("importedData: ", importedData);
     if (importedData.carrera) {
-      axios.post("http://localhost:8080/carreras/import", importedData).then((response)=>{
-        //esto deberia ir dentro de un popup que te avise que se creo la carrera y si queres verla inmediatamente
-        navigate('/carrera/'+response.data.carrera.id_C, { replace: false });
-      })
+      axios
+        .post("http://localhost:8080/carreras/import", importedData)
+        .then((response) => {
+          //esto deberia ir dentro de un popup que te avise que se creo la carrera y si queres verla inmediatamente
+          navigate("/carrera/" + response.data.carrera.id_C, {
+            replace: false,
+          });
+        });
     } else {
       // se reemplaza la carrera de cada materia por la actual
       importedData.materias = importedData.materias.map((materia) => {
@@ -238,11 +352,12 @@ const Carrera = () => {
           carrera: { id_C: thisCarrera.id_C },
         };
       });
-      axios.post("http://localhost:8080/materias/batch", importedData.materias)
-        .then((response)=>{
+      axios
+        .post("http://localhost:8080/materias/batch", importedData.materias)
+        .then((response) => {
           console.log("materias importadas: ", response);
-          getAllMaterias()
-        })
+          getAllMaterias();
+        });
     }
     /**************************************************************************************/
     /* momentaneamente, se agrega las materias importadas al listado de materias actuales */
@@ -454,13 +569,24 @@ const Carrera = () => {
           horizontal: "left",
         }}
       >
-        {materiaSeleccionada?.correlativas?.length > 0
-          ? materiaSeleccionada.correlativas
-              .map((corr) => (
-                <span key={corr.idMateria}>{corr.nombreMateria}</span>
-              ))
-              .reduce((prev, curr) => [prev, ", ", curr])
-          : "Ninguna"}
+        <FormControl sx={{ m: 1, width: 300 }}>
+          <InputLabel id="correlativas-label">Correlativas</InputLabel>
+          <Select
+            label="Correlativas"
+            multiple
+            value={materiaSeleccionada.correlativas || []}
+            onChange={(e) => {
+              handleCorrelativasClick(e);
+            }}
+            input={<OutlinedInput label="Correlativas" />}
+          >
+            {materias.map((materia) => (
+              <MenuItem key={materia.idMateria} value={materia}>
+                {materia.nombreMateria}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
       </Popover>
 
       <div className={styles.Body}>
@@ -489,45 +615,207 @@ const Carrera = () => {
             </div>
 
             {/* Filas de datos */}
-            {materias.map((materia) => {
+            {materias.map((materia, index) => {
               return (
                 <div key={materia.idMateria} className={styles.dataRows}>
-                  <div className={styles.singleData}>
-                    {materia.nombreMateria}
+                  <div
+                    className={styles.singleData}
+                    onClick={(e) =>
+                      handleClickEdit(e, materia, "nombreMateria")
+                    }
+                  >
+                    {editingField.id === materia.idMateria &&
+                    editingField.field === "nombreMateria" ? (
+                      <input
+                        type="text"
+                        value={inputValue}
+                        onChange={(e) => setInputValue(e.target.value)}
+                        onBlur={() => handleSaveEdit(materia)}
+                        autoFocus
+                      />
+                    ) : (
+                      materia.nombreMateria
+                    )}
                   </div>
-                  <div className={styles.singleData}>{materia.anio}</div>
-                  <div className={styles.singleData}>
-                    {materia.cuatrimestre}
+                  <div
+                    className={styles.singleData}
+                    onClick={(e) => handleClickEdit(e, materia, "anio")}
+                  >
+                    {editingField.id === materia.idMateria &&
+                    editingField.field === "anio" ? (
+                      <input
+                        type="number"
+                        value={inputValue || ""}
+                        onChange={(e) => setInputValue(e.target.value)}
+                        onBlur={() => handleSaveEdit(materia)}
+                        autoFocus
+                      />
+                    ) : (
+                      materia.anio
+                    )}
                   </div>
-                  <div className={styles.singleData}>
-                    {Array.isArray(materia.estado)
-                      ? `Falta aprobar: ${materia?.estado?.join(",")}`
-                      : materia.estado}
+                  <div
+                    className={styles.singleData}
+                    onClick={(e) => handleClickEdit(e, materia, "cuatrimestre")}
+                  >
+                    {editingField.id === materia.idMateria &&
+                    editingField.field === "cuatrimestre" ? (
+                      <Select
+                        value={materia.cuatrimestre || ""}
+                        onChange={(e) => {
+                          console.log(e.target);
+
+                          setInputValue(e.target.value); // Actualiza el inputValue
+                          handleSaveEditSelect(materia, e.target.value); // Guarda directamente
+                        }}
+                        label="Cuatrimestre"
+                        autoFocus
+                        onBlur={() =>
+                          setEditingField({ id: null, field: null })
+                        }
+                      >
+                        <MenuItem value={""} disabled>
+                          <em>Selecciona un valor</em>
+                        </MenuItem>
+                        <MenuItem value={"1er Cuatrimestre"}>
+                          1er Cuatrimestre
+                        </MenuItem>
+                        <MenuItem value={"2do Cuatrimestre"}>
+                          2do Cuatrimestre
+                        </MenuItem>
+                        <MenuItem value={"Anual"}>Anual</MenuItem>
+                      </Select>
+                    ) : (
+                      materia.cuatrimestre
+                    )}
                   </div>
-                  <div className={styles.singleData}>
-                    {materia.fechaRegularizacion
-                      ? materia.fechaRegularizacion
-                      : "N/A"}
+                  <div
+                    className={styles.singleData}
+                    onClick={(e) => handleClickEdit(e, materia, "estado")}
+                  >
+                    {editingField.id === materia.idMateria &&
+                    editingField.field === "estado" ? (
+                      <Select
+                        value={materia.estado || ""}
+                        onChange={(e) => {
+                          console.log(e.target);
+                          setInputValue(e.target.value); // Actualiza el inputValue
+                          handleSaveEditSelect(materia, e.target.value); // Guarda directamente
+                        }}
+                        label="Cuatrimestre"
+                        autoFocus
+                        onBlur={() =>
+                          setEditingField({ id: null, field: null })
+                        }
+                      >
+                        <MenuItem value={""} disabled>
+                          <em>Selecciona un valor</em>
+                        </MenuItem>
+                        <MenuItem value={"Pendiente"}>Pendiente</MenuItem>
+                        <MenuItem value={"Cursando"}>Cursando</MenuItem>
+                        <MenuItem value={"Regular"}>Regular</MenuItem>
+                        <MenuItem value={"Aprobado"}>Aprobado</MenuItem>
+                        <MenuItem value={"Promocionado"}>Promocionado</MenuItem>
+                      </Select>
+                    ) : Array.isArray(materia.estado) ? (
+                      `Falta aprobar: ${materia?.estado?.join(",")}`
+                    ) : (
+                      materia.estado
+                    )}
                   </div>
-                  <div className={styles.singleData}>
-                    {materia.fechaAprobacion ? materia.fechaAprobacion : "N/A"}
+                  <div
+                    className={styles.singleData}
+                    onClick={(e) =>
+                      handleClickEdit(e, materia, "fechaRegularizacion")
+                    }
+                  >
+                    {editingField.id === materia.idMateria &&
+                    editingField.field === "fechaRegularizacion" ? (
+                      <>
+                        <LocalizationProvider dateAdapter={AdapterDayjs}>
+                          <DatePicker
+                            label="Fecha Regularizacion"
+                            value={dayjs(materia.fechaRegularizacion)}
+                            onChange={(newValue) => {
+                              handleSaveEditSelect(
+                                materia,
+                                dayjs(newValue).toDate()
+                              );
+                            }}
+                          />
+                        </LocalizationProvider>
+                      </>
+                    ) : materia.fechaRegularizacion ? (
+                      dayjs(materia.fechaRegularizacion).toString()
+                    ) : (
+                      "N/A"
+                    )}
                   </div>
-                  <div className={styles.singleData}>
-                    {materia.calificacion !== null
-                      ? materia.calificacion
-                      : "N/A"}
+                  <div
+                    className={styles.singleData}
+                    onClick={(e) =>
+                      handleClickEdit(e, materia, "fechaAprobacion")
+                    }
+                  >
+                    {editingField.id === materia.idMateria &&
+                    editingField.field === "fechaAprobacion" ? (
+                      <>
+                        <LocalizationProvider dateAdapter={AdapterDayjs}>
+                          <DatePicker
+                            label="Fecha Aprobacion"
+                            value={dayjs(materia.fechaAprobacion)}
+                            onChange={(newValue) => {
+                              handleSaveEditSelect(
+                                materia,
+                                dayjs(newValue).toDate()
+                              );
+                            }}
+                          />
+                        </LocalizationProvider>
+                      </>
+                    ) : materia.fechaAprobacion ? (
+                      dayjs(materia.fechaAprobacion).toString()
+                    ) : (
+                      "N/A"
+                    )}
                   </div>
-                  <div className={styles.singleData}>
-                    <Button
-                      aria-describedby={id}
-                      variant="contained"
-                      onClick={(e) => handleClick(e, materia)}
-                      className={styles.correlativasButton}
-                    >
-                      <Icon icon="mdi:eye" />
-                    </Button>
+                  <div
+                    className={styles.singleData}
+                    onClick={(e) => handleClickEdit(e, materia, "calificacion")}
+                  >
+                    {editingField.id === materia.idMateria &&
+                    editingField.field === "calificacion" ? (
+                      <input
+                        type="number"
+                        value={inputValue || ""}
+                        onChange={(e) => setInputValue(e.target.value)}
+                        onBlur={() => handleSaveEdit(materia)}
+                        autoFocus
+                      />
+                    ) : materia.calificacion !== null ? (
+                      materia.calificacion
+                    ) : (
+                      "N/A"
+                    )}
                   </div>
-                  <div className={styles.singleData}>
+                  <div
+                    className={styles.singleData}
+                    onClick={(e) => handleClickCorrelativas(e, materia)}
+                  >
+                    {materia?.correlativas?.length > 0
+                      ? materia.correlativas
+                          .map((corr) => (
+                            <span key={corr.idMateria}>
+                              {corr.nombreMateria}
+                            </span>
+                          ))
+                          .reduce((prev, curr) => [prev, ", ", curr])
+                      : "Ninguna"}
+                  </div>
+                  <div
+                    className={styles.singleData}
+                    onClick={(e) => handleClickEdit(e, materia)}
+                  >
                     <Button onClick={(e) => handleClickDelete(e, materia)}>
                       <Icon icon="tabler:trash" width="24" height="24" />
                     </Button>
