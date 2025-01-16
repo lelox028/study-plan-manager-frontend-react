@@ -244,18 +244,17 @@ const Carrera = () => {
     updateMateria(newMateria);
   };
 
-  const handleSaveEditSelect = (materia, newValue) => {    
-
+  const handleSaveEditSelect = (materia, newValue) => {
     let updatedMateria = {
       ...materia,
       [editingField.field]: newValue,
-      
+
       correlativas: (materia.correlativas || []).map((item) => {
         return { idMateria: item.idMateria };
       }),
       carrera: { id_C: materia.carrera.id_C },
-    };    
-   
+    };
+
     setEditingField({ id: null, field: null }); // Sale del modo edición
 
     updateMateria(updatedMateria);
@@ -367,6 +366,24 @@ const Carrera = () => {
     /**************************************************************************************/
 
     // save to database
+  };
+
+  /******************************************************************************************/
+  /*                                 Style Selection Section                                */
+  /******************************************************************************************/
+
+  const clasesPorEstado = {
+    1: styles.singleDataCursable,
+    2: styles.singleDataCursando,
+    3: styles.singleDataRegular,
+    4: styles.singleDataAprobado,
+    5: styles.singleDataBloqueado,
+  };
+
+  const clasesPorCuatrimestre = {
+    1: styles.singleDataPrimerCuatrimestre,
+    2: styles.singleDataSegundoCuatrimestre,
+    3: styles.singleDataAnual,
   };
 
   return (
@@ -616,6 +633,45 @@ const Carrera = () => {
 
             {/* Filas de datos */}
             {materias.map((materia, index) => {
+              //*************************** logica para setear clases ***************************
+              let estadoClassname;
+              switch (materia.estado) {
+                case "Cursable":
+                  estadoClassname = 1;
+                  break;
+                case "Cursando":
+                  estadoClassname = 2;
+                  break;
+                case "Regular":
+                  estadoClassname = 3;
+                  break;
+                case "Aprobado":
+                  estadoClassname = 4;
+                  break;
+                case "Promocionado":
+                  estadoClassname = 4;
+                  break;
+                default:
+                  estadoClassname = 5;
+                  break;
+              }
+              const selectedEstadoClass = clasesPorEstado[estadoClassname];
+
+              let cuatrimestreClassname;
+              switch (materia.cuatrimestre) {
+                case "1er Cuatrimestre":
+                  cuatrimestreClassname = 1;
+                  break;
+                case "2do Cuatrimestre":
+                  cuatrimestreClassname = 2;
+                  break;
+                case "Anual":
+                  cuatrimestreClassname = 3;
+                  break;
+              }
+              const selectedCuatrimestreClass =
+                clasesPorCuatrimestre[cuatrimestreClassname];
+              //************************* fin logica para setear clases *************************
               return (
                 <div key={materia.idMateria} className={styles.dataRows}>
                   <div
@@ -686,7 +742,9 @@ const Carrera = () => {
                         <MenuItem value={"Anual"}>Anual</MenuItem>
                       </Select>
                     ) : (
-                      materia.cuatrimestre
+                      <div className={selectedCuatrimestreClass}>
+                        {materia.cuatrimestre}
+                      </div>
                     )}
                   </div>
                   <div
@@ -717,10 +775,13 @@ const Carrera = () => {
                         <MenuItem value={"Aprobado"}>Aprobado</MenuItem>
                         <MenuItem value={"Promocionado"}>Promocionado</MenuItem>
                       </Select>
-                    ) : Array.isArray(materia.estado) ? (
-                      `Falta aprobar: ${materia?.estado?.join(",")}`
                     ) : (
-                      materia.estado
+                      <div className={selectedEstadoClass}>
+                        {Array.isArray(materia.estado)
+                          ? `Falta aprobar: $
+                        {materia?.estado?.join(",")}`
+                          : materia.estado}
+                      </div>
                     )}
                   </div>
                   <div
