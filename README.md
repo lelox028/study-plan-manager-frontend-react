@@ -23,9 +23,8 @@ Welcome to the frontend repository of **Study Plan Manager** – an application 
 ## Technologies:
 
 - **React.js** for building the user interface.
-- **Redux** for state management.
-- **Axios** for API communication with the backend.
-- **Bootstrap/Tailwind CSS** for responsive design.
+- **Node.js** for server management
+- **SCSS** for styles
 
 ## Requirements:
 
@@ -86,9 +85,8 @@ Bienvenido al repositorio del frontend de **Study Plan Manager** – una aplicac
 ## Tecnologías:
 
 - **React.js** para la construcción de la interfaz.
-- **Redux** para la gestión de estados.
-- **Axios** para la comunicación con la API.
-- **Bootstrap/Tailwind CSS** para el diseño responsivo.
+- **Node.js** para manejo de servidor.
+- **SCSS* para estilos
 
 ## Requisitos:
 
