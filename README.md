@@ -13,7 +13,6 @@ Welcome to the frontend repository of **Study Plan Manager** – an application 
 - **User-Friendly Interface:** Intuitive and responsive design for managing study plans and subjects.
 - **Dynamic Visualization:** Real-time visualization of study plans, current enrollments, and progress tracking.
 - **Interactive Filters:** Easily filter and sort subjects based on status, prerequisites, and performance.
-- **Notifications:** Receive updates on blocked/unblocked subjects and other important changes.
 
 ## Upcoming Features (Future):
 
@@ -30,9 +29,11 @@ Welcome to the frontend repository of **Study Plan Manager** – an application 
 
 - **Node.js 17.5.0 or higher**
 - **npm** or **yarn** package manager
-- **.env** file with backend API URL
 
 ## Setup Instructions:
+
+> [!IMPORTANT]
+> The following instructions do not include the necessary steps for this project's backend setup. for more info, please [check this repository.](https://github.com/lelox028/study-plan-manager-api)
 
 1. Clone the Repository:
    ```bash
@@ -51,19 +52,14 @@ Welcome to the frontend repository of **Study Plan Manager** – an application 
    yarn install
    ```
 
-4. Create the Environment File:
-   ```env
-   REACT_APP_API_URL=http://localhost:8080
-   ```
-
-5. Run the Application:
+4. Run the Application:
    ```bash
    npm start
    # or
    yarn start
    ```
 
-6. Access the Application:
+5. Access the Application:
    Open your browser and navigate to `http://localhost:3000`.
 
 </details>
@@ -80,21 +76,22 @@ Bienvenido al repositorio del frontend de **Study Plan Manager** – una aplicac
 - **Interfaz Amigable:** Diseño intuitivo y responsivo para gestionar planes de estudio y asignaturas.
 - **Visualización Dinámica:** Visualización en tiempo real de los planes de estudio, inscripciones actuales y seguimiento del progreso.
 - **Filtros Interactivos:** Filtra y ordena asignaturas según estado, correlatividades y rendimiento.
-- **Notificaciones:** Recibe actualizaciones sobre asignaturas bloqueadas/desbloqueadas y otros cambios importantes.
 
 ## Tecnologías:
 
 - **React.js** para la construcción de la interfaz.
 - **Node.js** para manejo de servidor.
-- **SCSS* para estilos
+- **SCSS** para estilos
 
 ## Requisitos:
 
 - **Node.js 17.5.0 o superior**
 - **npm** o **yarn**
-- Archivo **.env** con la URL de la API
 
 ## Instrucciones para Configurar el Proyecto:
+
+> [!IMPORTANT]
+> Los pasos descriptos a continuacion no incluyen la configuracion del backend del proyecto. para mas informacion [consulte el siguiente repositorio](https://github.com/lelox028/study-plan-manager-api)
 
 1. Clona el Repositorio:
    ```bash
@@ -113,19 +110,14 @@ Bienvenido al repositorio del frontend de **Study Plan Manager** – una aplicac
    yarn install
    ```
 
-4. Crea el Archivo de Entorno:
-   ```env
-   REACT_APP_API_URL=http://localhost:8080
-   ```
-
-5. Ejecuta la Aplicación:
+4. Ejecuta la Aplicación:
    ```bash
    npm start
    # o
    yarn start
    ```
 
-6. Accede a la Aplicación:
+5. Accede a la Aplicación:
    Abre tu navegador y navega a `http://localhost:3000`.
 
 </details>
