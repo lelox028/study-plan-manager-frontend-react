@@ -100,7 +100,7 @@ Bienvenido al repositorio del frontend de **Study Plan Manager** – una aplicac
 
 2. Accede al Directorio del Proyecto:
    ```bash
-   cd study-plan-manager-frontend
+   cd StudyPlanManager
    ```
 
 3. Instala las Dependencias:
