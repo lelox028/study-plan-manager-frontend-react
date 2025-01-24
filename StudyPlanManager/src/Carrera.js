@@ -186,7 +186,7 @@ const Carrera = () => {
     );
 
     // Actualizar el estado de las materias
-    return materias.map((materia) => {
+    return (materias||[]).map((materia) => {
       // Si la materia ya está aprobada o promocionada, no modificar su estado
       if (materia.estado !== "Pendiente") {
         return materia;
@@ -536,7 +536,7 @@ const Carrera = () => {
                 }}
                 input={<OutlinedInput label="Correlativas" />}
               >
-                {materias.map((materia) => (
+                {(materias || []).map((materia) => (
                   <MenuItem key={materia.idMateria} value={materia}>
                     {materia.nombreMateria}
                   </MenuItem>
@@ -580,7 +580,7 @@ const Carrera = () => {
             }}
             input={<OutlinedInput label="Correlativas" />}
           >
-            {materias.map((materia) => (
+            {(materias || []).map((materia) => (
               <MenuItem key={materia.idMateria} value={materia}>
                 {materia.nombreMateria}
               </MenuItem>
@@ -615,7 +615,7 @@ const Carrera = () => {
             </div>
 
             {/* Filas de datos */}
-            {materias.map((materia, index) => {
+            {(materias || []).map((materia, index) => {
               return (
                 <div key={materia.idMateria} className={styles.dataRows}>
                   <div
