@@ -187,7 +187,7 @@ const Carrera = () => {
     );
 
     // Actualizar el estado de las materias
-    return (materias||[]).map((materia) => {
+    return (materias || []).map((materia) => {
       // Si la materia ya está aprobada o promocionada, no modificar su estado
       if (materia.estado !== "Pendiente") {
         return materia;
@@ -245,18 +245,18 @@ const Carrera = () => {
     updateMateria(newMateria);
   };
 
-  const handleSaveEditSelect = (materia, newValue) => {    
+  const handleSaveEditSelect = (materia, newValue) => {
 
     let updatedMateria = {
       ...materia,
       [editingField.field]: newValue,
-      
+
       correlativas: (materia.correlativas || []).map((item) => {
         return { idMateria: item.idMateria };
       }),
       carrera: { id_C: materia.carrera.id_C },
-    };    
-   
+    };
+
     setEditingField({ id: null, field: null }); // Sale del modo edición
 
     updateMateria(updatedMateria);
@@ -591,7 +591,7 @@ const Carrera = () => {
       </Popover>
 
       <div className={styles.Body}>
-        <TopBar/>
+        <TopBar />
         <div className={styles.Main}>
           <div className={styles.MainHeader}>
             <h2>{thisCarrera.nombreC}</h2>
@@ -621,7 +621,7 @@ const Carrera = () => {
                     }
                   >
                     {editingField.id === materia.idMateria &&
-                    editingField.field === "nombreMateria" ? (
+                      editingField.field === "nombreMateria" ? (
                       <input
                         type="text"
                         value={inputValue}
@@ -638,7 +638,7 @@ const Carrera = () => {
                     onClick={(e) => handleClickEdit(e, materia, "anio")}
                   >
                     {editingField.id === materia.idMateria &&
-                    editingField.field === "anio" ? (
+                      editingField.field === "anio" ? (
                       <input
                         type="number"
                         value={inputValue || ""}
@@ -655,7 +655,7 @@ const Carrera = () => {
                     onClick={(e) => handleClickEdit(e, materia, "cuatrimestre")}
                   >
                     {editingField.id === materia.idMateria &&
-                    editingField.field === "cuatrimestre" ? (
+                      editingField.field === "cuatrimestre" ? (
                       <Select
                         value={materia.cuatrimestre || ""}
                         onChange={(e) => {
@@ -690,7 +690,7 @@ const Carrera = () => {
                     onClick={(e) => handleClickEdit(e, materia, "estado")}
                   >
                     {editingField.id === materia.idMateria &&
-                    editingField.field === "estado" ? (
+                      editingField.field === "estado" ? (
                       <Select
                         value={materia.estado || ""}
                         onChange={(e) => {
@@ -726,7 +726,7 @@ const Carrera = () => {
                     }
                   >
                     {editingField.id === materia.idMateria &&
-                    editingField.field === "fechaRegularizacion" ? (
+                      editingField.field === "fechaRegularizacion" ? (
                       <>
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
                           <DatePicker
@@ -754,7 +754,7 @@ const Carrera = () => {
                     }
                   >
                     {editingField.id === materia.idMateria &&
-                    editingField.field === "fechaAprobacion" ? (
+                      editingField.field === "fechaAprobacion" ? (
                       <>
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
                           <DatePicker
@@ -780,7 +780,7 @@ const Carrera = () => {
                     onClick={(e) => handleClickEdit(e, materia, "calificacion")}
                   >
                     {editingField.id === materia.idMateria &&
-                    editingField.field === "calificacion" ? (
+                      editingField.field === "calificacion" ? (
                       <input
                         type="number"
                         value={inputValue || ""}
@@ -800,12 +800,12 @@ const Carrera = () => {
                   >
                     {materia?.correlativas?.length > 0
                       ? materia.correlativas
-                          .map((corr) => (
-                            <span key={corr.idMateria}>
-                              {corr.nombreMateria}
-                            </span>
-                          ))
-                          .reduce((prev, curr) => [prev, ", ", curr])
+                        .map((corr) => (
+                          <span key={corr.idMateria}>
+                            {corr.nombreMateria}
+                          </span>
+                        ))
+                        .reduce((prev, curr) => [prev, ", ", curr])
                       : "Ninguna"}
                   </div>
                   <div
