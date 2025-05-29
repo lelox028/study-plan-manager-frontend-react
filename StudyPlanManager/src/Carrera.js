@@ -30,6 +30,8 @@ import dayjs from "dayjs";
 
 import { useNavigate } from "react-router-dom";
 
+// import DefaultTable
+
 //import/export
 import ImportExport, { exportJSON, importJSON } from "./ImportExport";
 
@@ -597,7 +599,10 @@ const Carrera = () => {
             <div className={styles.Title}>
               <h2>{thisCarrera.nombreC}</h2><Icon icon="tabler:share-2" width="24" height="24" />
             </div>
-            <div className={styles.tabViews}>aaa</div>
+            <div className={styles.tabViews}>
+              <div>Default View</div>
+              <div>Other View</div>
+            </div>
           </div>
           <div className={styles.Table}>
             {/* Encabezados */}

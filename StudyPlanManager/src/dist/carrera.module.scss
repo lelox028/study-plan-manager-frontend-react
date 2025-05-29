@@ -95,7 +95,7 @@ $border: #343c44;
         .Table {
             background-color: $bg-light;
             display: grid;
-            padding: 0 2em;
+            //padding: 0 2em;
             // margin: 0 auto;
             // width: fit-content;
 
@@ -166,8 +166,8 @@ $border: #343c44;
                 padding: 10px;
                 border-bottom: 1px solid #ccc;
                 background-color: palevioletred;
-                color: black;
-                background-color: $fg-primary;
+                color: $text;
+                background-color: $bg-light;
             }
 
             & .newMateria:hover {
