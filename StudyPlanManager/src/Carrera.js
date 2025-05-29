@@ -7,6 +7,8 @@ import { Popover } from "@mui/material";
 import Button from "@mui/material/Button";
 import { Icon } from "@iconify/react";
 import Checkbox from "@mui/material/Checkbox";
+// Import SPM Logo
+import Logo from "./dist/img/SPM_Logo_Cropped.jpg"
 // Dialog imports
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
@@ -592,7 +594,11 @@ const Carrera = () => {
       <div className={styles.Body}>
         <div className={styles.TopBar}>
           <Container className={styles.TopBarContainer}>
-            <div className={styles.Left}>left</div>
+            <div className={styles.Left}>
+              <a href='/'>
+                <img src={Logo} alt="SPM Logo" className={styles.Logo} />  
+              </a>
+            </div>
             <div className={styles.Right}>right</div>
           </Container>
         </div>

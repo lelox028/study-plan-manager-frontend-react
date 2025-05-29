@@ -3,6 +3,8 @@ import { Container } from '@mui/material';
 import React from 'react'
 import axios from 'axios';
 import { FaFolder, FaFolderOpen } from "react-icons/fa";
+// Import SPM Logo
+import Logo from "./dist/img/SPM_Logo_Cropped.jpg"
 
 function Home() {
     //logic
@@ -58,7 +60,10 @@ function Home() {
         <div className={styles.Body}>
             <div className={styles.TopBar}>
                 <Container className={styles.TopBarContainer}>
-                    <div className={styles.Left}>left</div>
+                    <div className={styles.Left}>
+                        <a href='/'>
+                            <img src={Logo} alt="SPM Logo" className={styles.Logo} />
+                        </a>                    </div>
                     <div className={styles.Right}>right</div>
                 </Container>
             </div>
