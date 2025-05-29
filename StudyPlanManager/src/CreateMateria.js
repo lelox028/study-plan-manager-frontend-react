@@ -1,6 +1,19 @@
 // import styles from './dist/createMateria.module.scss';
+import styles from "./dist/carrera.module.scss";
 
-import React from "react";
+
+import React, { forwardRef } from "react";
+import Button from "@mui/material/Button";
+import { Icon } from "@iconify/react";
+import Checkbox from "@mui/material/Checkbox";
+import { Container, Slide } from "@mui/material";
+import FormControl from "@mui/material/FormControl";
+import InputLabel from "@mui/material/InputLabel";
+import OutlinedInput from "@mui/material/OutlinedInput";
+
+// Select imports
+import MenuItem from "@mui/material/MenuItem";
+import Select from "@mui/material/Select";
 
 // Dialog imports
 import Dialog from "@mui/material/Dialog";
@@ -21,7 +34,7 @@ const Transition = forwardRef(function Transition(props, ref) {
     return <Slide direction="left" ref={ref} {...props} />;
 });
 
-function createMateria({ materias, thisCarrera, onAdd }) {
+function CreateMateria({ materias, thisCarrera, onAdd }) {
 
     /******************************************************************************************/
     /*                                    Use States                                          */
@@ -43,7 +56,7 @@ function createMateria({ materias, thisCarrera, onAdd }) {
             ...materiaSeleccionada,
             carrera: { id_C: thisCarrera.id_C },
             // Se recorre el arreglo de correlativas y se descartan todos los campos que no son el id de la materia.
-            correlativas: materiaSeleccionada.correlativas.map((materia) => {
+            correlativas: (materiaSeleccionada.correlativas)||[].map((materia) => {
                 return { idMateria: materia.idMateria };
             }),
         };
@@ -265,4 +278,4 @@ function createMateria({ materias, thisCarrera, onAdd }) {
     )
 }
 
-export default createMateria;
+export default CreateMateria;
