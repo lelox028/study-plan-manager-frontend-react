@@ -4,7 +4,7 @@ import React from 'react'
 import axios from 'axios';
 import { FaFolder, FaFolderOpen } from "react-icons/fa";
 // Import SPM Logo
-import Logo from "./dist/img/SPM_Logo_Cropped.jpg"
+import Logo from "./dist/img/SPM_Logo_Cropped.png"
 
 function Home() {
     //logic

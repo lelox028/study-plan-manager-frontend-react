@@ -8,7 +8,7 @@ import Button from "@mui/material/Button";
 import { Icon } from "@iconify/react";
 import Checkbox from "@mui/material/Checkbox";
 // Import SPM Logo
-import Logo from "./dist/img/SPM_Logo_Cropped.jpg"
+import Logo from "./dist/img/SPM_Logo_Cropped.png"
 // Dialog imports
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
