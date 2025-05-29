@@ -594,7 +594,10 @@ const Carrera = () => {
         <TopBar />
         <div className={styles.Main}>
           <div className={styles.MainHeader}>
-            <h2>{thisCarrera.nombreC}</h2>
+            <div className={styles.Title}>
+              <h2>{thisCarrera.nombreC}</h2><Icon icon="tabler:share-2" width="24" height="24" />
+            </div>
+            <div className={styles.tabViews}>aaa</div>
           </div>
           <div className={styles.Table}>
             {/* Encabezados */}
