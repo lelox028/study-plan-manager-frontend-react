@@ -1,5 +1,5 @@
 // import styles from './dist/createMateria.module.scss';
-import styles from "./dist/carrera.module.scss";
+import styles from "./dist/defaultTable.module.scss";
 
 
 import React, { forwardRef } from "react";
