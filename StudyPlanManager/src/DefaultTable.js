@@ -88,7 +88,9 @@ function DefaultTable({ materias, thisCarrera, onEdit, onDelete, onAdd }) {
         let updatedMateria = {
             ...materia,
             [editingField.field]: newValue,
-
+            estado: /^(Cursando|Regular|Aprobado|Promocionado)$/.test(materia.estado)
+                ? materia.estado
+                : "Pendiente",
             correlativas: (materia.correlativas || []).map((item) => {
                 return { idMateria: item.idMateria };
             }),
@@ -107,7 +109,7 @@ function DefaultTable({ materias, thisCarrera, onEdit, onDelete, onAdd }) {
                 : m
         );
 
-        materias=(updatedMaterias); // Actualiza el estado
+        //setMaterias(updatedMaterias); // Actualiza el estado
         materia = {
             ...materia,
             estado: /^(Cursando|Regular|Aprobado|Promocionado)$/.test(materia.estado)
