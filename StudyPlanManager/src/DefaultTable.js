@@ -21,12 +21,11 @@ import dayjs from "dayjs";
 import CreateMateria from "./CreateMateria";
 
 
-function DefaultTable({ materias, thisCarrera, onEdit, onDelete, onAdd }) {
+function DefaultTable({ materias,setMaterias, thisCarrera, onEdit, onDelete, onAdd, materiaSeleccionada, setMateriaSeleccionada }) {
 
     /******************************************************************************************/
     /*                                    Use States                                          */
     /******************************************************************************************/
-    const [materiaSeleccionada, setMateriaSeleccionada] = React.useState({});
     const [editingField, setEditingField] = React.useState({
         id: null,
         field: null,
@@ -109,7 +108,7 @@ function DefaultTable({ materias, thisCarrera, onEdit, onDelete, onAdd }) {
                 : m
         );
 
-        //setMaterias(updatedMaterias); // Actualiza el estado
+        setMaterias(updatedMaterias); // Actualiza el estado
         materia = {
             ...materia,
             estado: /^(Cursando|Regular|Aprobado|Promocionado)$/.test(materia.estado)
@@ -136,9 +135,17 @@ function DefaultTable({ materias, thisCarrera, onEdit, onDelete, onAdd }) {
     const [anchorEl, setAnchorEl] = React.useState(null);
 
     const handleClickCorrelativas = (event, materia) => {
-        setMateriaSeleccionada(materia);
-        setAnchorEl(event.currentTarget);
-    };
+    // Sincroniza correlativas con las referencias de materias
+    const correlativasActuales = (materia.correlativas || []).map(corr =>
+        materias.find(m => m.idMateria === corr.idMateria)
+    ).filter(Boolean);
+
+    setMateriaSeleccionada({
+        ...materia,
+        correlativas: correlativasActuales
+    });
+    setAnchorEl(event.currentTarget);
+};
 
     const handleClose = (e) => {
         setAnchorEl(null);

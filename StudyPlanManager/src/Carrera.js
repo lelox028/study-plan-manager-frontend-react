@@ -27,7 +27,9 @@ const Carrera = () => {
   const [thisCarrera, setThisCarrera] = React.useState([]);
   const [materias, setMaterias] = React.useState([]);
   const [materiasAprobadas, setMateriasAprobadas] = React.useState([]);
-  
+  const [materiaSeleccionada, setMateriaSeleccionada] = React.useState({});
+
+
 
   /******************************************************************************************/
   /*                                  Requests Section                                      */
@@ -125,7 +127,7 @@ const Carrera = () => {
     setMaterias(actualizarEstadoMaterias(materias, materiasAprobadas));
   }, [materiasAprobadas]);
 
-  
+
 
 
 
@@ -211,7 +213,7 @@ const Carrera = () => {
 
   return (
     <>
-      
+
 
       <div className={styles.Body}>
         <TopBar />
@@ -230,7 +232,10 @@ const Carrera = () => {
             onEdit={updateMateria}
             onAdd={createMateria}
             materias={materias}
+            setMaterias={setMaterias}
             thisCarrera={thisCarrera}
+            materiaSeleccionada={materiaSeleccionada}
+            setMateriaSeleccionada={setMateriaSeleccionada}
           ></DefaultTable>
           <ImportExport
             onImport={handleImport}
