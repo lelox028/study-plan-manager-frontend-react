@@ -187,7 +187,7 @@ function DefaultTable({ materias, setMaterias, thisCarrera, onEdit, onDelete, on
                         input={<OutlinedInput label="Correlativas" />}
                     >
                         {(materias || []).map((materia) => (
-                            materia.idMateria !== materiaSeleccionada.idMateria && (
+                            (materia.idMateria !== materiaSeleccionada.idMateria && (materiaSeleccionada.anio > materia.anio || (materiaSeleccionada.anio===materia.anio && (materiaSeleccionada.cuatrimestre==='2do Cuatrimestre'&&materia.cuatrimestre==='1er Cuatrimestre')))) && (
                                 <MenuItem key={materia.idMateria} value={materia}>
                                     {materia.nombreMateria}
                                 </MenuItem>
