@@ -21,7 +21,7 @@ import dayjs from "dayjs";
 import CreateMateria from "./CreateMateria";
 
 
-function DefaultTable({ materias,setMaterias, thisCarrera, onEdit, onDelete, onAdd, materiaSeleccionada, setMateriaSeleccionada }) {
+function DefaultTable({ materias, setMaterias, thisCarrera, onEdit, onDelete, onAdd, materiaSeleccionada, setMateriaSeleccionada }) {
 
     /******************************************************************************************/
     /*                                    Use States                                          */
@@ -135,17 +135,17 @@ function DefaultTable({ materias,setMaterias, thisCarrera, onEdit, onDelete, onA
     const [anchorEl, setAnchorEl] = React.useState(null);
 
     const handleClickCorrelativas = (event, materia) => {
-    // Sincroniza correlativas con las referencias de materias
-    const correlativasActuales = (materia.correlativas || []).map(corr =>
-        materias.find(m => m.idMateria === corr.idMateria)
-    ).filter(Boolean);
+        // Sincroniza correlativas con las referencias de materias
+        const correlativasActuales = (materia.correlativas || []).map(corr =>
+            materias.find(m => m.idMateria === corr.idMateria)
+        ).filter(Boolean);
 
-    setMateriaSeleccionada({
-        ...materia,
-        correlativas: correlativasActuales
-    });
-    setAnchorEl(event.currentTarget);
-};
+        setMateriaSeleccionada({
+            ...materia,
+            correlativas: correlativasActuales
+        });
+        setAnchorEl(event.currentTarget);
+    };
 
     const handleClose = (e) => {
         setAnchorEl(null);
@@ -187,9 +187,11 @@ function DefaultTable({ materias,setMaterias, thisCarrera, onEdit, onDelete, onA
                         input={<OutlinedInput label="Correlativas" />}
                     >
                         {(materias || []).map((materia) => (
-                            <MenuItem key={materia.idMateria} value={materia}>
-                                {materia.nombreMateria}
-                            </MenuItem>
+                            materia.idMateria !== materiaSeleccionada.idMateria && (
+                                <MenuItem key={materia.idMateria} value={materia}>
+                                    {materia.nombreMateria}
+                                </MenuItem>
+                            )
                         ))}
                     </Select>
                 </FormControl>
