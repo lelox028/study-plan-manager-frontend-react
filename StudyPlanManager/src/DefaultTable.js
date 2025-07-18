@@ -83,17 +83,21 @@ function DefaultTable({ materias, setMaterias, thisCarrera, onEdit, onDelete, on
     };
 
     const handleSaveEditSelect = (materia, newValue) => {
-
-        let updatedMateria = {
+        // Actualiza el campo específico de la materia con el nuevo valor
+        let tempMateria = {
             ...materia,
-            [editingField.field]: newValue,
-            estado: /^(Cursando|Regular|Aprobado|Promocionado)$/.test(materia.estado)
-                ? materia.estado
+            [editingField.field]: newValue
+        }
+        // Controles y validaciones necesarias.
+        let updatedMateria = {
+            ...tempMateria,
+            estado: /^(Cursando|Regular|Aprobado|Promocionado)$/.test(tempMateria.estado)
+                ? tempMateria.estado
                 : "Pendiente",
-            correlativas: (materia.correlativas || []).map((item) => {
+            correlativas: (tempMateria.correlativas || []).map((item) => {
                 return { idMateria: item.idMateria };
             }),
-            carrera: { id_C: materia.carrera.id_C },
+            carrera: { id_C: tempMateria.carrera.id_C },
         };
 
         setEditingField({ id: null, field: null }); // Sale del modo edición
@@ -300,7 +304,6 @@ function DefaultTable({ materias, setMaterias, thisCarrera, onEdit, onDelete, on
                                         <Select
                                             value={materia.estado || ""}
                                             onChange={(e) => {
-                                                console.log(e.target);
                                                 setInputValue(e.target.value); // Actualiza el inputValue
                                                 handleSaveEditSelect(materia, e.target.value); // Guarda directamente
                                             }}
