@@ -13,6 +13,7 @@ import DefaultTable from "./DefaultTable";
 
 //import/export
 import ImportExport, { exportJSON, importJSON } from "./ImportExport";
+import { Container } from "@mui/material";
 
 
 
@@ -218,6 +219,7 @@ const Carrera = () => {
       <div className={styles.Body}>
         <TopBar />
         <div className={styles.Main}>
+          <Container maxWidth="xl">
           <div className={styles.MainHeader}>
             <div className={styles.Title}>
               <h2>{thisCarrera.nombreC}</h2><Icon icon="tabler:share-2" width="24" height="24" />
@@ -241,6 +243,7 @@ const Carrera = () => {
             onImport={handleImport}
             dataToExport={{ materias: materias, carrera: thisCarrera }}
           ></ImportExport>
+          </Container>
         </div>
       </div>
     </>

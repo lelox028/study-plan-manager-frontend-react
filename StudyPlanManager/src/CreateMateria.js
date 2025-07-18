@@ -266,14 +266,14 @@ function CreateMateria({ materias, thisCarrera, onAdd }) {
                 </DialogActions>
             </Dialog>
             {/* fila de nueva materia */}
-            <div
+            <tr
                 onClick={(e) => {
                     handleClickOpenCreate(e, materiaSeleccionada);
                 }}
                 className={styles.newMateria}
             >
                 <Icon icon="tabler:plus" width="24" height="24" /> Nueva Materia
-            </div>
+            </tr>
         </>
     )
 }
