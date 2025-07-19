@@ -351,7 +351,7 @@ function DefaultTable({ materias, setMaterias, thisCarrera, onEdit, onDelete, on
                                             </LocalizationProvider>
                                         </>
                                     ) : materia.fechaRegularizacion ? (
-                                        dayjs(materia.fechaRegularizacion).toString()
+                                        dayjs(materia.fechaRegularizacion).format("DD/MM/YYYY")
                                     ) : (
                                         "N/A"
                                     )}
@@ -379,7 +379,7 @@ function DefaultTable({ materias, setMaterias, thisCarrera, onEdit, onDelete, on
                                             </LocalizationProvider>
                                         </>
                                     ) : materia.fechaAprobacion ? (
-                                        dayjs(materia.fechaAprobacion).toString()
+                                        dayjs(materia.fechaAprobacion).format("DD/MM/YYYY")
                                     ) : (
                                         "N/A"
                                     )}
