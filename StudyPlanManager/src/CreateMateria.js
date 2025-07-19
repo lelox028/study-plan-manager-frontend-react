@@ -56,7 +56,7 @@ function CreateMateria({ materias, thisCarrera, onAdd }) {
             ...materiaSeleccionada,
             carrera: { id_C: thisCarrera.id_C },
             // Se recorre el arreglo de correlativas y se descartan todos los campos que no son el id de la materia.
-            correlativas: (materiaSeleccionada.correlativas)||[].map((materia) => {
+            correlativas: (materiaSeleccionada.correlativas) || [].map((materia) => {
                 return { idMateria: materia.idMateria };
             }),
         };
@@ -266,14 +266,16 @@ function CreateMateria({ materias, thisCarrera, onAdd }) {
                 </DialogActions>
             </Dialog>
             {/* fila de nueva materia */}
-            <tr
+
+            <div
                 onClick={(e) => {
                     handleClickOpenCreate(e, materiaSeleccionada);
                 }}
                 className={styles.newMateria}
             >
                 <Icon icon="tabler:plus" width="24" height="24" /> Nueva Materia
-            </tr>
+            </div>
+
         </>
     )
 }

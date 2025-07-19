@@ -428,13 +428,13 @@ function DefaultTable({ materias, setMaterias, thisCarrera, onEdit, onDelete, on
                             </tr>
                         );
                     })}
-                    <CreateMateria
-                        materias={materias}
-                        thisCarrera={thisCarrera}
-                        onAdd={onAdd}
-                    />
                 </tbody>
             </table>
+            <CreateMateria
+                materias={materias}
+                thisCarrera={thisCarrera}
+                onAdd={onAdd}
+            />
         </>
     )
 }

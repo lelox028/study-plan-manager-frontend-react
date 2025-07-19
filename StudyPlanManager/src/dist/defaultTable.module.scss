@@ -70,19 +70,27 @@ $border: #343c44;
         background-color: $accent;
     }
 
-    & .newMateria {
-        display: flex;
-        align-items: center;
-        gap: 4px;
-        padding: 10px;
-        border-bottom: 1px solid $border;
-        background-color: palevioletred;
-        color: $text;
-        background-color: $bg-light;
-    }
+}
 
-    & .newMateria:hover {
-        background-color: $accent;
-        cursor: pointer;
-    }
+.newMateria {
+    display: flex;
+    align-items: center;
+    justify-content: left; // Centra el contenido
+    gap: 8px;
+    padding: 12px;
+    border-bottom: 1px solid $border;
+    border-left: 1px solid $border;
+    border-right: 1px solid $border;
+    background-color: $bg-light;
+    color: $text;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+
+    // Asegura que ocupe todo el ancho disponible
+    // width: 100%;
+    text-align: center;
+}
+
+.newMateria:hover {
+    background-color: $accent;
 }
