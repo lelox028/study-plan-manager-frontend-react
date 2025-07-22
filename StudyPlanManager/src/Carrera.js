@@ -295,7 +295,21 @@ const Carrera = () => {
             )}
             {activeTab === 2 && (
               <div>
-                Cursables
+                <div className={styles.yearTable}>
+                  <div className={styles.yearTitle}>
+                    <h3>Materias Cursables</h3>
+                  </div>
+                  <DefaultTable
+                    onDelete={deleteMateriaById}
+                    onEdit={updateMateria}
+                    onAdd={createMateria}
+                    materias={materias.filter(materia => materia.estado === "Cursable")}
+                    setMaterias={setMaterias}
+                    thisCarrera={thisCarrera}
+                    materiaSeleccionada={materiaSeleccionada}
+                    setMateriaSeleccionada={setMateriaSeleccionada}
+                  ></DefaultTable>
+                </div>
               </div>
             )}
 
