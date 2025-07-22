@@ -29,6 +29,7 @@ const Carrera = () => {
   const [materias, setMaterias] = React.useState([]);
   const [materiasAprobadas, setMateriasAprobadas] = React.useState([]);
   const [materiaSeleccionada, setMateriaSeleccionada] = React.useState({});
+  const [activeTab, setActiveTab] = React.useState(0);
 
 
 
@@ -128,7 +129,9 @@ const Carrera = () => {
     setMaterias(actualizarEstadoMaterias(materias, materiasAprobadas));
   }, [materiasAprobadas]);
 
-
+  React.useEffect(() => {
+    console.log("Active Tab is ", activeTab);
+  },[activeTab]);
 
 
 
@@ -225,8 +228,24 @@ const Carrera = () => {
               <h2>{thisCarrera.nombreC}</h2><Icon icon="tabler:share-2" width="24" height="24" />
             </div>
             <div className={styles.tabViews}>
-              <div>Default View</div>
-              <div>Other View</div>
+              <div
+                className={`${styles.tabView} ${activeTab === 0 ? styles.active : ""}`}
+                onClick={() => setActiveTab(0)}
+              >
+                Default View
+              </div>
+              <div
+                className={`${styles.tabView} ${activeTab === 1 ? styles.active : ""}`}
+                onClick={() => setActiveTab(1)}
+              >
+                Per-Year View
+              </div>
+              <div
+                className={`${styles.tabView} ${activeTab === 2 ? styles.active : ""}`}
+                onClick={() => setActiveTab(2)}
+              >
+                Cursables View
+              </div>
             </div>
           </div>
           <DefaultTable

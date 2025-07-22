@@ -88,10 +88,56 @@ $border: #343c44;
                 margin: 0 3em;
             }
 
-            .tabViews {}
+            .tabViews {
+                display: flex;
+                // gap: 0.5rem;
+                margin-bottom: -2px; // Para que las tabs se superpongan con el borde de la tabla
+                position: relative;
+                z-index: 2;
+
+                :first-child {
+                    border-radius: 10px 0px 0 0;
+                }
+
+                :last-child {
+                    border-radius: 0 10px 0px 0px;
+                }
+
+                .tabView {
+                    background: $bg-light;
+                    color: $text;
+                    padding: 0.75em 2em;
+                    border: 1px solid $border;
+                    border-bottom: none;
+                    // border-radius: 10px 10px 0 0;
+                    cursor: pointer;
+                    font-weight: 500;
+                    transition: background 0.2s, color 0.2s, border 0.2s;
+                    position: relative;
+                    top: 2px;
+                    
+
+                    &:not(.active){
+                        background: $bg-dark;
+                        z-index: -1;
+                    }
+
+                    &:not(.active):hover {
+                        background: lighten($bg-light, 5%);
+                        // color: $accent;
+                    }
+
+                    & .active {
+                        background: #fff;
+                        color: $fg-primary;
+                        border-bottom: 2px solid #fff;
+                        z-index: 3;
+                    }
+                }
+            }
 
         }
 
-        
+
     }
 }

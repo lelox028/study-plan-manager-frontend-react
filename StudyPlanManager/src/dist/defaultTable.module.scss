@@ -9,6 +9,10 @@ $border: #343c44;
     border-collapse: collapse;
     table-layout: fixed;
     width: 100%;
+    //tabs related
+    margin-top: 0;
+    position: relative;
+    z-index: 10;
 
     & .tableHeaders {
         //display: inline-flex;
