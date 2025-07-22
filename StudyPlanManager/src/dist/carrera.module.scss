@@ -115,9 +115,9 @@ $border: #343c44;
                     transition: background 0.2s, color 0.2s, border 0.2s;
                     position: relative;
                     top: 2px;
-                    
 
-                    &:not(.active){
+
+                    &:not(.active) {
                         background: $bg-dark;
                         z-index: -1;
                     }
@@ -136,8 +136,34 @@ $border: #343c44;
                 }
             }
 
+
+
         }
 
+        .yearTable {
+            // display: flex;
+            margin-top: 0;
+            position: relative;
+            z-index: 10;
+            margin-bottom: 2em;
 
+
+            .yearTitle {
+                background: $bg-light;
+                font-size: 1.5rem;
+                font-weight: bold;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                padding: 1em 0;
+
+
+
+                & h3 {
+                    margin: 0;
+                }
+
+            }
+        }
     }
 }
