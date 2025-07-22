@@ -1,0 +1,26 @@
+@import './globalStyles.module.scss';
+
+.TopBar {
+        background-color: $bg-dark;
+        width: 100%;
+        height: 6em;
+
+        .TopBarContainer {
+            display: flex;
+            justify-content: space-between;
+            height: inherit;
+
+            .Left {
+                margin: auto 3em;
+                .Logo {
+                    max-width: 9em;
+                }
+            }
+
+            .Right {
+                display: flex;
+                margin: auto 3em;
+                justify-content: space-between;
+            }
+        }
+    }

@@ -3,7 +3,7 @@ import { Container } from '@mui/material';
 import React from 'react'
 import axios from 'axios';
 import { FaFolder, FaFolderOpen } from "react-icons/fa";
-
+import TopBar from './TopBar';
 function Home() {
     //logic
     const [universidades, setUniversidades] = React.useState([]);
@@ -56,12 +56,7 @@ function Home() {
 
     return (
         <div className={styles.Body}>
-            <div className={styles.TopBar}>
-                <Container className={styles.TopBarContainer}>
-                    <div className={styles.Left}>left</div>
-                    <div className={styles.Right}>right</div>
-                </Container>
-            </div>
+            <TopBar />
             <Container maxWidth='lg'>
                 <div className={styles.Main}>
                     <div className={styles.Title}>
