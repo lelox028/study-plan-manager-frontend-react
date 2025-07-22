@@ -278,7 +278,7 @@ const Carrera = () => {
               materiasPorAnio.map((currentMaterias, anio) => (
                 <div key={anio} className={styles.yearTable}>
                   <div className={styles.yearTitle}>
-                    <h3>Año {anio}</h3>
+                    <h3>{anio} Año</h3>
                   </div>
                   <DefaultTable
                     onDelete={deleteMateriaById}
