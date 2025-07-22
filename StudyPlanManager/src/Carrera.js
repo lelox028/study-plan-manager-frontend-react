@@ -27,10 +27,25 @@ const Carrera = () => {
   /******************************************************************************************/
   const [thisCarrera, setThisCarrera] = React.useState([]);
   const [materias, setMaterias] = React.useState([]);
+  const [materiasPorAnio, setMateriasPorAnio] = React.useState({});
   const [materiasAprobadas, setMateriasAprobadas] = React.useState([]);
   const [materiaSeleccionada, setMateriaSeleccionada] = React.useState({});
+  const [activeTab, setActiveTab] = React.useState(0);
 
-
+  /******************************************************************************************/
+  /*                                    Aux Functions                                       */
+  /******************************************************************************************/
+  const segregateMateriasByYear = (materias) => {
+    const materiasPorAnio = [];
+    materias.forEach((materia) => {
+      const anio = materia.anio;
+      if (!materiasPorAnio[anio]) {
+        materiasPorAnio[anio] = [];
+      }
+      materiasPorAnio[anio].push(materia);
+    });
+    return materiasPorAnio;
+  };
 
   /******************************************************************************************/
   /*                                  Requests Section                                      */
@@ -128,8 +143,11 @@ const Carrera = () => {
     setMaterias(actualizarEstadoMaterias(materias, materiasAprobadas));
   }, [materiasAprobadas]);
 
-
-
+  React.useEffect(() => {
+    // segregate materias by year
+    setMateriasPorAnio(segregateMateriasByYear(materias));
+    console.log("Materias por año: ", materiasPorAnio);
+  }, [materias]);
 
 
   /******************************************************************************************/
@@ -214,35 +232,91 @@ const Carrera = () => {
 
   return (
     <>
-
-
       <div className={styles.Body}>
         <TopBar />
         <div className={styles.Main}>
           <Container maxWidth="xl">
-          <div className={styles.MainHeader}>
-            <div className={styles.Title}>
-              <h2>{thisCarrera.nombreC}</h2><Icon icon="tabler:share-2" width="24" height="24" />
+            <div className={styles.MainHeader}>
+              <div className={styles.Title}>
+                <h2>{thisCarrera.nombreC}</h2><Icon icon="tabler:share-2" width="24" height="24" />
+              </div>
+              <div className={styles.tabViews}>
+                <div
+                  className={`${styles.tabView} ${activeTab === 0 ? styles.active : ""}`}
+                  onClick={() => setActiveTab(0)}
+                >
+                  Default View
+                </div>
+                <div
+                  className={`${styles.tabView} ${activeTab === 1 ? styles.active : ""}`}
+                  onClick={() => setActiveTab(1)}
+                >
+                  Per-Year View
+                </div>
+                <div
+                  className={`${styles.tabView} ${activeTab === 2 ? styles.active : ""}`}
+                  onClick={() => setActiveTab(2)}
+                >
+                  Cursables View
+                </div>
+              </div>
             </div>
-            <div className={styles.tabViews}>
-              <div>Default View</div>
-              <div>Other View</div>
-            </div>
-          </div>
-          <DefaultTable
-            onDelete={deleteMateriaById}
-            onEdit={updateMateria}
-            onAdd={createMateria}
-            materias={materias}
-            setMaterias={setMaterias}
-            thisCarrera={thisCarrera}
-            materiaSeleccionada={materiaSeleccionada}
-            setMateriaSeleccionada={setMateriaSeleccionada}
-          ></DefaultTable>
-          <ImportExport
-            onImport={handleImport}
-            dataToExport={{ materias: materias, carrera: thisCarrera }}
-          ></ImportExport>
+            {activeTab === 0 && (
+              <DefaultTable
+                onDelete={deleteMateriaById}
+                onEdit={updateMateria}
+                onAdd={createMateria}
+                materias={materias}
+                setMaterias={setMaterias}
+                thisCarrera={thisCarrera}
+                materiaSeleccionada={materiaSeleccionada}
+                setMateriaSeleccionada={setMateriaSeleccionada}
+              ></DefaultTable>
+            )
+            }
+            {activeTab === 1 && (
+              materiasPorAnio.map((currentMaterias, anio) => (
+                <div key={anio} className={styles.yearTable}>
+                  <div className={styles.yearTitle}>
+                    <h3>{anio} Año</h3>
+                  </div>
+                  <DefaultTable
+                    onDelete={deleteMateriaById}
+                    onEdit={updateMateria}
+                    onAdd={createMateria}
+                    materias={currentMaterias}
+                    setMaterias={setMaterias}
+                    thisCarrera={thisCarrera}
+                    materiaSeleccionada={materiaSeleccionada}
+                    setMateriaSeleccionada={setMateriaSeleccionada}
+                  ></DefaultTable>
+                </div>
+              ))
+            )}
+            {activeTab === 2 && (
+              <div>
+                <div className={styles.yearTable}>
+                  <div className={styles.yearTitle}>
+                    <h3>Materias Cursables</h3>
+                  </div>
+                  <DefaultTable
+                    onDelete={deleteMateriaById}
+                    onEdit={updateMateria}
+                    onAdd={createMateria}
+                    materias={materias.filter(materia => materia.estado === "Cursable")}
+                    setMaterias={setMaterias}
+                    thisCarrera={thisCarrera}
+                    materiaSeleccionada={materiaSeleccionada}
+                    setMateriaSeleccionada={setMateriaSeleccionada}
+                  ></DefaultTable>
+                </div>
+              </div>
+            )}
+
+            <ImportExport
+              onImport={handleImport}
+              dataToExport={{ materias: materias, carrera: thisCarrera }}
+            ></ImportExport>
           </Container>
         </div>
       </div>
