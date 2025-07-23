@@ -82,6 +82,8 @@ $border: #343c44;
             text-align: center;
             vertical-align: middle;
             line-height: 3em;
+            border-left: 1px solid $border;
+            border-right: 1px solid $border;
         }
     }
 

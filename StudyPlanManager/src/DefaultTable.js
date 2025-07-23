@@ -458,14 +458,14 @@ function DefaultTable({ materias, setMaterias, thisCarrera, onEdit, onDelete, on
                     </tr>
                     <tr className={styles.statsRow}>
                         <td className={styles.singleStat}> Total: {materias.length}</td>
-                        <td className={styles.singleStat}></td>
-                        <td className={styles.singleStat}></td>
+                        <td ></td>
+                        <td ></td>
                         <td className={styles.singleStat}>Completado: {(materiasAprobadas.length/materias.length*100).toFixed(2)}%</td>
-                        <td className={styles.singleStat}></td>
-                        <td className={styles.singleStat}></td>
+                        <td ></td>
+                        <td ></td>
                         <td className={styles.singleStat}>Promedio: {isNaN(promedio) ? 0 : promedio.toFixed(2)}</td>
-                        <td className={styles.singleStat}></td>
-                        <td className={styles.singleStat}></td>
+                        <td ></td>
+                        <td ></td>
                     </tr>
                 </tbody>
             </table>
