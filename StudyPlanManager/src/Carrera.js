@@ -29,6 +29,7 @@ const Carrera = () => {
   const [materias, setMaterias] = React.useState([]);
   const [materiasPorAnio, setMateriasPorAnio] = React.useState({});
   const [materiasAprobadas, setMateriasAprobadas] = React.useState([]);
+  const [materiasAprobadasPorAnio, setMateriasAprobadasPorAnio] = React.useState({});
   const [materiaSeleccionada, setMateriaSeleccionada] = React.useState({});
   const [activeTab, setActiveTab] = React.useState(0);
 
@@ -46,6 +47,18 @@ const Carrera = () => {
     });
     return materiasPorAnio;
   };
+
+  const getMateriasAprobadasPorAnio = (materiasAprobadas) => {
+    const materiasAprobadasPorAnio = [];
+    materiasAprobadas.forEach((materia) => {
+      const anio = materia.anio;
+      if (!materiasAprobadasPorAnio[anio]) {
+        materiasAprobadasPorAnio[anio] = [];
+      }
+      materiasAprobadasPorAnio[anio].push(materia);
+    });
+    return materiasAprobadasPorAnio;
+  }
 
   /******************************************************************************************/
   /*                                  Requests Section                                      */
@@ -146,6 +159,7 @@ const Carrera = () => {
   React.useEffect(() => {
     // segregate materias by year
     setMateriasPorAnio(segregateMateriasByYear(materias));
+    setMateriasAprobadasPorAnio(getMateriasAprobadasPorAnio(materiasAprobadas));
     console.log("Materias por año: ", materiasPorAnio);
   }, [materias]);
 
@@ -271,6 +285,7 @@ const Carrera = () => {
                 thisCarrera={thisCarrera}
                 materiaSeleccionada={materiaSeleccionada}
                 setMateriaSeleccionada={setMateriaSeleccionada}
+                materiasAprobadas={materiasAprobadas}
               ></DefaultTable>
             )
             }
@@ -289,6 +304,7 @@ const Carrera = () => {
                     thisCarrera={thisCarrera}
                     materiaSeleccionada={materiaSeleccionada}
                     setMateriaSeleccionada={setMateriaSeleccionada}
+                    materiasAprobadas={materiasAprobadasPorAnio[anio]}
                   ></DefaultTable>
                 </div>
               ))
@@ -308,6 +324,7 @@ const Carrera = () => {
                     thisCarrera={thisCarrera}
                     materiaSeleccionada={materiaSeleccionada}
                     setMateriaSeleccionada={setMateriaSeleccionada}
+                    materiasAprobadas={[]}
                   ></DefaultTable>
                 </div>
               </div>

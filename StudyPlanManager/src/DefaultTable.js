@@ -21,7 +21,7 @@ import dayjs from "dayjs";
 import CreateMateria from "./CreateMateria";
 
 
-function DefaultTable({ materias, setMaterias, thisCarrera, onEdit, onDelete, onAdd, materiaSeleccionada, setMateriaSeleccionada }) {
+function DefaultTable({ materias, setMaterias, thisCarrera, onEdit, onDelete, onAdd, materiaSeleccionada, setMateriaSeleccionada, materiasAprobadas }) {
 
     /******************************************************************************************/
     /*                                    Use States                                          */
@@ -31,6 +31,7 @@ function DefaultTable({ materias, setMaterias, thisCarrera, onEdit, onDelete, on
         field: null,
     });
     const [inputValue, setInputValue] = React.useState("");
+    const [promedio,setPromedio] = React.useState(0);
 
     /******************************************************************************************/
     /*                                UseEffects Section                                      */
@@ -40,6 +41,24 @@ function DefaultTable({ materias, setMaterias, thisCarrera, onEdit, onDelete, on
         console.log("materia seleccionada: ", materiaSeleccionada);
     }, [materiaSeleccionada]);
 
+    React.useEffect(() => {
+        setPromedio(getPromedio(materias));
+    }, [materias]);
+
+    /******************************************************************************************/
+    /*                                    Aux Functions                                       */
+    /******************************************************************************************/
+    const getPromedio = (materias) => {
+        let promedio = 0;
+        let materiasCalificadas = 0
+        materias.forEach((materia) => {
+            if (materia.calificacion !== null) {
+                materiasCalificadas++;
+                promedio += materia.calificacion;
+            }
+        });
+        return promedio / materiasCalificadas;
+    }
     /******************************************************************************************/
     /*                                  Edits  Section                                        */
     /******************************************************************************************/
@@ -436,6 +455,17 @@ function DefaultTable({ materias, setMaterias, thisCarrera, onEdit, onDelete, on
                                 onAdd={onAdd}
                             />
                         </td>
+                    </tr>
+                    <tr className={styles.statisticsRow}>
+                        <td className={styles.singleHeader}> Total: {materias.length}</td>
+                        <td className={styles.singleHeader}></td>
+                        <td className={styles.singleHeader}></td>
+                        <td className={styles.singleHeader}>Completado: {(materiasAprobadas.length/materias.length*100).toFixed(2)}%</td>
+                        <td className={styles.singleHeader}></td>
+                        <td className={styles.singleHeader}></td>
+                        <td className={styles.singleHeader}>Promedio: {isNaN(promedio) ? 0 : promedio.toFixed(2)}</td>
+                        <td className={styles.singleHeader}></td>
+                        <td className={styles.singleHeader}></td>
                     </tr>
                 </tbody>
             </table>
