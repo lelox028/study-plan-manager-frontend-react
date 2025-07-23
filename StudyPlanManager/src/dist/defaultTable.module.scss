@@ -74,6 +74,17 @@ $border: #343c44;
         background-color: $accent;
     }
 
+    .statsRow {
+        color: $text;
+
+        .singleStat {
+            // height: 3em;
+            text-align: center;
+            vertical-align: middle;
+            line-height: 3em;
+        }
+    }
+
 }
 
 .newMateria {
