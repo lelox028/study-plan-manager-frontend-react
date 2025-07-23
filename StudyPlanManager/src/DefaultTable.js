@@ -428,13 +428,18 @@ function DefaultTable({ materias, setMaterias, thisCarrera, onEdit, onDelete, on
                             </tr>
                         );
                     })}
+                    <tr>
+                        <td colSpan="9" className={styles.addMateria}>
+                            <CreateMateria
+                                materias={materias}
+                                thisCarrera={thisCarrera}
+                                onAdd={onAdd}
+                            />
+                        </td>
+                    </tr>
                 </tbody>
             </table>
-            <CreateMateria
-                materias={materias}
-                thisCarrera={thisCarrera}
-                onAdd={onAdd}
-            />
+
         </>
     )
 }
