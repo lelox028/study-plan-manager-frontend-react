@@ -47,6 +47,67 @@ $border: #343c44;
 
         }
 
+        // estilos de cada estado
+        .estadoAprobado {
+            background-color: transparent !important; // Fondo transparente para el td
+            text-align: center !important;
+
+            // Crear una "caja" interna usando pseudo-elemento
+            position: relative !important;
+
+            &::before {
+                content: "";
+                position: absolute;
+                top: 20%;
+                left: 13%;
+                right: 13%;
+                bottom: 20%;
+                background-color: #2f654a;
+                border-radius: 15px;
+                z-index: -1;
+            }
+
+            // font-weight: bold;
+        }
+
+        .estadoCursable {
+            background-color: transparent !important; // Fondo transparente para el td
+            text-align: center !important;
+
+            // Crear una "caja" interna usando pseudo-elemento
+            position: relative !important;
+
+            &::before {
+                content: "";
+                position: absolute;
+                top: 20%;
+                left: 13%;
+                right: 13%;
+                bottom: 20%;
+                background-color: #e9ecef;
+                border-radius: 15px;
+                z-index: -1;
+            }
+
+            color: #6c757d !important;
+            font-weight: 500;
+        }
+
+        .estadoCursando {
+            background-color: #d1ecf1 !important;
+            color: #0c5460 !important;
+        }
+
+        .estadoPendiente {
+            background-color: #f8d7da !important;
+            color: #721c24 !important;
+        }
+
+        .estadoDefault {
+            background-color: $bg-light;
+            color: $text;
+        }
+
         & :global(.MuiButton-root) {
             background-color: $bg-dark;
             color: $text;

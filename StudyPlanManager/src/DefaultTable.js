@@ -31,7 +31,7 @@ function DefaultTable({ materias, setMaterias, thisCarrera, onEdit, onDelete, on
         field: null,
     });
     const [inputValue, setInputValue] = React.useState("");
-    const [promedio,setPromedio] = React.useState(0);
+    const [promedio, setPromedio] = React.useState(0);
 
     /******************************************************************************************/
     /*                                UseEffects Section                                      */
@@ -59,6 +59,20 @@ function DefaultTable({ materias, setMaterias, thisCarrera, onEdit, onDelete, on
         });
         return promedio / materiasCalificadas;
     }
+
+    const getEstadoClass = (estado) => {
+        if (estado === "Aprobado" || estado === "Promocionado") {
+            return styles.estadoAprobado;
+        } else if (estado === "Cursable") {
+            return styles.estadoCursable;
+        } else if (typeof estado === "string" && estado.startsWith("Falta aprobar:")) {
+            return styles.estadoPendiente;
+        } else if (estado === "Cursando") {
+            return styles.estadoCursando;
+        } else if (estado === "Regular") {
+            return styles.estadoRegular;
+        }
+    };
     /******************************************************************************************/
     /*                                  Edits  Section                                        */
     /******************************************************************************************/
@@ -315,7 +329,7 @@ function DefaultTable({ materias, setMaterias, thisCarrera, onEdit, onDelete, on
                                     )}
                                 </td>
                                 <td
-                                    className={styles.singleData}
+                                    className={`${styles.singleData} ${getEstadoClass(materia.estado)}`}
                                     onClick={(e) => handleClickEdit(e, materia, "estado")}
                                 >
                                     {editingField.id === materia.idMateria &&
@@ -460,7 +474,7 @@ function DefaultTable({ materias, setMaterias, thisCarrera, onEdit, onDelete, on
                         <td className={styles.singleStat}> Total: {materias.length}</td>
                         <td ></td>
                         <td ></td>
-                        <td className={styles.singleStat}>Completado: {(materiasAprobadas.length/materias.length*100).toFixed(2)}%</td>
+                        <td className={styles.singleStat}>Completado: {(materiasAprobadas.length / materias.length * 100).toFixed(2)}%</td>
                         <td ></td>
                         <td ></td>
                         <td className={styles.singleStat}>Promedio: {isNaN(promedio) ? 0 : promedio.toFixed(2)}</td>
