@@ -38,7 +38,7 @@ const Carrera = () => {
   /******************************************************************************************/
   const segregateMateriasByYear = (materias) => {
     const materiasPorAnio = [];
-    materias.forEach((materia) => {
+    materias?.forEach((materia) => {
       const anio = materia.anio;
       if (!materiasPorAnio[anio]) {
         materiasPorAnio[anio] = [];
