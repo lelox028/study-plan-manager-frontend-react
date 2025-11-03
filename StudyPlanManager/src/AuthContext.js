@@ -19,7 +19,7 @@ export const AuthProvider = ({ children }) => {
 
   const fetchUser = async () => {
     try {
-      const response = await axios.get('http://localhost:8080/users/me');
+      const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/users/me`);
       setUser(response.data);
     } catch (error) {
       console.error('Error fetching user:', error);
@@ -29,7 +29,7 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (username, password) => {
     try {
-      const response = await axios.post('http://localhost:8080/auth/login', { username, password });
+      const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/auth/login`, { username, password });
       const { token } = response.data;
       setToken(token);
       localStorage.setItem('token', token);
@@ -44,7 +44,7 @@ export const AuthProvider = ({ children }) => {
 
   const signup = async (username, email, password) => {
     try {
-      await axios.post('http://localhost:8080/auth/signup', { username, email, password });
+      await axios.post(`${process.env.REACT_APP_BACKEND_URL}/auth/signup`, { username, email, password });
       return true;
     } catch (error) {
       console.error('Signup error:', error);
