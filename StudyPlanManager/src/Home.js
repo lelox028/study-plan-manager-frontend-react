@@ -14,7 +14,7 @@ function Home() {
 
     // Load Universidades
     React.useEffect(() => {
-        axios.get('http://localhost:8080/universidades')
+        axios.get(`${process.env.REACT_APP_BACKEND_URL}/universidades`)
             .then(response => {
                 console.log("Datos recibidos: ", response.data); // Axios ya tiene los datos en 'response.data'
                 setUniversidades(response.data);
@@ -28,7 +28,7 @@ function Home() {
     React.useEffect(() => {
         console.log("Active Uni is ", activeUni)
         if (activeUni.id_Universidad) {
-            axios.get('http://localhost:8080/facultades/universidades/' + activeUni.id_Universidad + '/facultades')
+            axios.get(`${process.env.REACT_APP_BACKEND_URL}/facultades/universidades/` + activeUni.id_Universidad + '/facultades')
                 .then(response => {
                     console.log("Datos facultad recibidos: ", response.data); // Axios ya tiene los datos en 'response.data'
                     setFacultades(response.data);
@@ -43,7 +43,7 @@ function Home() {
     React.useEffect(() => {
         console.log("Active facu is ", activeFacu)
         if (activeFacu.id_F) {
-            axios.get('http://localhost:8080/carreras/facultades/' + activeFacu.id_F + '/carreras')
+            axios.get(`${process.env.REACT_APP_BACKEND_URL}/carreras/facultades/` + activeFacu.id_F + '/carreras')
                 .then(response => {
                     console.log("Datos carreras recibidos: ", response.data); // Axios ya tiene los datos en 'response.data'
                     setCarreras(response.data);

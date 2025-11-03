@@ -38,7 +38,7 @@ const Carrera = () => {
   /******************************************************************************************/
   const segregateMateriasByYear = (materias) => {
     const materiasPorAnio = [];
-    materias.forEach((materia) => {
+    materias?.forEach((materia) => {
       const anio = materia.anio;
       if (!materiasPorAnio[anio]) {
         materiasPorAnio[anio] = [];
@@ -65,7 +65,7 @@ const Carrera = () => {
   /******************************************************************************************/
   const getCarreraFromDatabase = () => {
     axios
-      .get("http://localhost:8080/carreras/" + slug)
+      .get(`${process.env.REACT_APP_BACKEND_URL}/carreras/` + slug)
       .then((response) => {
         console.log("Datos carrera recibidos: ", response.data);
         setThisCarrera(response.data);
@@ -77,7 +77,7 @@ const Carrera = () => {
 
   const getMateriasAprobadasFromDatabase = () => {
     axios
-      .get("http://localhost:8080/materias/carreras/" + slug + "/aprobadas")
+      .get(`${process.env.REACT_APP_BACKEND_URL}/materias/carreras/` + slug + "/aprobadas")
       .then((response) => {
         console.log("Datos materias aprobadas recibidos: ", response.data);
         setMateriasAprobadas(response.data);
@@ -90,7 +90,7 @@ const Carrera = () => {
   //this function gets both materias and materias aprobadas.
   const getAllMaterias = () => {
     axios
-      .get("http://localhost:8080/materias/carreras/" + slug + "/materias")
+      .get(`${process.env.REACT_APP_BACKEND_URL}/materias/carreras/` + slug + "/materias")
       .then((response) => {
         console.log("Datos materias recibidos: ", response.data);
         setMaterias(response.data);
@@ -105,7 +105,7 @@ const Carrera = () => {
 
   const deleteMateriaById = (materia) => {
     axios
-      .delete("http://localhost:8080/materias/" + materia.idMateria)
+      .delete(`${process.env.REACT_APP_BACKEND_URL}/materias/` + materia.idMateria)
       .then((response) => {
         console.log("deleted: ", response);
         // Se vuelven a cargar las materias desde la database para actualizar la lista
@@ -118,7 +118,7 @@ const Carrera = () => {
 
   const createMateria = (materia) => {
     axios
-      .post("http://localhost:8080/materias", materia)
+      .post(`${process.env.REACT_APP_BACKEND_URL}/materias`, materia)
       .then((response) => {
         console.log("resultado post:", response);
         // Se vuelven a cargar las materias desde la database para actualizar la lista
@@ -131,7 +131,7 @@ const Carrera = () => {
 
   const updateMateria = (materia) => {
     axios
-      .put(`http://localhost:8080/materias/${materia.idMateria}`, materia)
+      .put(`${process.env.REACT_APP_BACKEND_URL}/materias/${materia.idMateria}`, materia)
       .then((response) => {
         console.log("updated: ", response);
         getAllMaterias();
@@ -212,7 +212,7 @@ const Carrera = () => {
     console.log("importedData: ", importedData);
     if (importedData.carrera) {
       axios
-        .post("http://localhost:8080/carreras/import", importedData)
+        .post(`${process.env.REACT_APP_BACKEND_URL}/carreras/import`, importedData)
         .then((response) => {
           //esto deberia ir dentro de un popup que te avise que se creo la carrera y si queres verla inmediatamente
           navigate("/carrera/" + response.data.carrera.id_C, {
@@ -228,7 +228,7 @@ const Carrera = () => {
         };
       });
       axios
-        .post("http://localhost:8080/materias/batch", importedData.materias)
+        .post(`${process.env.REACT_APP_BACKEND_URL}/materias/batch`, importedData.materias)
         .then((response) => {
           console.log("materias importadas: ", response);
           getAllMaterias();
