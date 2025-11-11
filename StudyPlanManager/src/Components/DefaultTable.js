@@ -1,4 +1,4 @@
-import styles from './dist/defaultTable.module.scss';
+import styles from '../dist/defaultTable.module.scss';
 import React from "react";
 import { Popover } from "@mui/material";
 import Button from "@mui/material/Button";

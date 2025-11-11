@@ -1,18 +1,18 @@
-import styles from "./dist/carrera.module.scss";
+import styles from "../dist/carrera.module.scss";
 import React from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import { Icon } from "@iconify/react";
-import TopBar from './TopBar';
+import TopBar from '../Components/TopBar';
 
 import { useNavigate } from "react-router-dom";
 
 // import DefaultTable
-import DefaultTable from "./DefaultTable";
+import DefaultTable from "../Components/DefaultTable";
 
 
 //import/export
-import ImportExport, { exportJSON, importJSON } from "./ImportExport";
+import ImportExport, { exportJSON, importJSON } from "../Components/ImportExport";
 import { Container } from "@mui/material";
 
 

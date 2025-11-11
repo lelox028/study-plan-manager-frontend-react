@@ -1,21 +1,22 @@
 import React, { useState } from 'react';
 import { TextField, Button, Container, Typography, Box } from '@mui/material';
-import { useAuth } from './AuthContext';
+import { useAuth } from '../AuthContext';
 import { useNavigate } from 'react-router-dom';
 
-const Login = () => {
+const Signup = () => {
   const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const { login } = useAuth();
+  const { signup } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const success = await login(username, password);
+    const success = await signup(username, email, password);
     if (success) {
-      navigate('/');
+      navigate('/login');
     } else {
-      alert('Login failed');
+      alert('Signup failed');
     }
   };
 
@@ -23,7 +24,7 @@ const Login = () => {
     <Container maxWidth="sm">
       <Box sx={{ mt: 8, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
         <Typography component="h1" variant="h5">
-          Login
+          Signup
         </Typography>
         <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1 }}>
           <TextField
@@ -33,6 +34,15 @@ const Login = () => {
             label="Username"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
+          />
+          <TextField
+            margin="normal"
+            required
+            fullWidth
+            label="Email"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
           />
           <TextField
             margin="normal"
@@ -49,7 +59,7 @@ const Login = () => {
             variant="contained"
             sx={{ mt: 3, mb: 2 }}
           >
-            Login
+            Signup
           </Button>
         </Box>
       </Box>
@@ -57,4 +67,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default Signup;

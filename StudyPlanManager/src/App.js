@@ -1,10 +1,10 @@
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './AuthContext';
-import Home from './Home.js';
-import Carrera from './Carrera.js';
-import Login from './Login.js';
-import Signup from './Signup.js';
+import Home from './Pages/Home.js';
+import Carrera from './Pages/Carrera.js';
+import Login from './Pages/Login.js';
+import Signup from './Pages/Signup.js';
 
 const ProtectedRoute = ({ children }) => {
   const { token } = useAuth();
