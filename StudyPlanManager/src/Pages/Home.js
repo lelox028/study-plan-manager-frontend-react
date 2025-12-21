@@ -1,5 +1,5 @@
 import styles from '../dist/home.module.scss';
-import { Container } from '@mui/material';
+import { Container, TextField, Button } from '@mui/material';
 import React from 'react'
 import axios from 'axios';
 import { FaFolder, FaFolderOpen, FaFolderPlus } from "react-icons/fa";
@@ -11,9 +11,42 @@ function Home() {
     const [facultades, setFacultades] = React.useState([]);
     const [activeFacu, setActiveFacu] = React.useState([]);
     const [carreras, setCarreras] = React.useState([]);
+    const [isAddingUniversidad, setIsAddingUniversidad] = React.useState(false);
+    const [isAddingFacultad, setIsAddingFacultad] = React.useState(false);
+    const [isAddingCarrera, setIsAddingCarrera] = React.useState(false);
+    const [newNameField, setNewNameField] = React.useState('');
+    const [newCarreraNombre, setNewCarreraNombre] = React.useState('');
+    const [newCarreraDuracion, setNewCarreraDuracion] = React.useState('');
+    const [newCarreraTituloIntermedio, setNewCarreraTituloIntermedio] = React.useState('');
+
+
+    /******************************************************************************************/
+    /*                                         Use Effects                                    */
+    /******************************************************************************************/
+
+    React.useEffect(() => {
+        loadUniversidades();
+    }, []);
+
+    // Load facultades from Active Universidad
+    React.useEffect(() => {
+        console.log("Active Uni is ", activeUni)
+        loadFacultades();
+    }, [activeUni])
+
+
+    React.useEffect(() => {
+        console.log("Active facu is ", activeFacu)
+        loadCarreras();
+    }, [activeFacu])
+
+
+    /******************************************************************************************/
+    /*                                      Requests Section                                  */
+    /******************************************************************************************/
 
     // Load Universidades
-    React.useEffect(() => {
+    const loadUniversidades = () => {
         axios.get(`${process.env.REACT_APP_BACKEND_URL}/universidades`)
             .then(response => {
                 console.log("Datos recibidos: ", response.data); // Axios ya tiene los datos en 'response.data'
@@ -22,11 +55,10 @@ function Home() {
             .catch(error => {
                 console.error('Error al obtener las universidades:', error);
             });
-    }, []);
+    }
 
     // Load facultades from Active Universidad
-    React.useEffect(() => {
-        console.log("Active Uni is ", activeUni)
+    const loadFacultades = () => {
         if (activeUni.id_Universidad) {
             axios.get(`${process.env.REACT_APP_BACKEND_URL}/facultades/universidades/` + activeUni.id_Universidad + '/facultades')
                 .then(response => {
@@ -37,11 +69,10 @@ function Home() {
                     console.error('Error al obtener las facultades:', error);
                 });
         }
-    }, [activeUni])
+    }
 
     // Load carreras from Active Facultad
-    React.useEffect(() => {
-        console.log("Active facu is ", activeFacu)
+    const loadCarreras = () => {
         if (activeFacu.id_F) {
             axios.get(`${process.env.REACT_APP_BACKEND_URL}/carreras/facultades/` + activeFacu.id_F + '/carreras')
                 .then(response => {
@@ -52,7 +83,93 @@ function Home() {
                     console.error('Error al obtener las facultades:', error);
                 });
         }
-    }, [activeFacu])
+    }
+
+    const createUniversidad = (nombreU) => {
+        axios.post(`${process.env.REACT_APP_BACKEND_URL}/universidades`, { nombre_Universidad: nombreU }).then(response => {
+            console.log("Universidad creada: ", response.data);
+            loadUniversidades();
+        }).catch(error => {
+            console.error('Error al crear la universidad:', error);
+        });
+    }
+
+    const createFacultad = (nombreF) => {
+        axios.post(`${process.env.REACT_APP_BACKEND_URL}/facultades`, { nombreF: nombreF, universidad:activeUni }).then(response => {
+            console.log("Facultad creada: ", response.data);
+            loadFacultades();
+        }).catch(error => {
+            console.error('Error al crear la facultad:', error);
+        });
+    }
+
+    const createCarrera =(carrera) => {
+        console.log("Creating carrera: ", carrera);
+        axios.post(`${process.env.REACT_APP_BACKEND_URL}/carreras`,  carrera).then(response => {
+            console.log("Carrera creada: ", response.data);
+            loadCarreras();
+        }).catch(error => {
+            console.error('Error al crear la carrera:', error);
+        });
+    }
+    /******************************************************************************************/
+    /*                           New Universidad/Facultad Logic                               */
+    /******************************************************************************************/
+    // Función para guardar la nueva facultad (por ahora, solo en consola; expande para POST)
+    const handleSaveFacultad = () => {
+        if (newNameField.trim()) {
+            console.log('Nueva facultad guardada:', newNameField);  // Aquí puedes agregar el POST al backend
+            // Post request to backend can be added here
+            createFacultad(newNameField, activeUni.id_Universidad);
+            setNewNameField('');
+            setIsAddingFacultad(false);
+        }
+    };
+
+    const handleSaveUniversidad = () => {
+        if (newNameField.trim()) {
+            console.log('Nueva universidad guardada:', newNameField);  // Aquí puedes agregar el POST al backend
+            // Post request to backend can be added here
+            createUniversidad(newNameField);
+            setNewNameField('');
+            setIsAddingUniversidad(false);
+        }
+    };
+
+    const handleSaveCarrera = () => {
+        if (newCarreraNombre.trim() && newCarreraDuracion && newCarreraTituloIntermedio.trim()) {
+            const currentCarrera={
+                nombreC: newCarreraNombre,
+                duracion: parseInt(newCarreraDuracion),
+                tituloIntermedio: newCarreraTituloIntermedio,
+                fechaInscripcion: new Date(),
+                facultad: activeFacu
+            };
+            createCarrera(currentCarrera);
+            setNewCarreraNombre('');
+            setNewCarreraDuracion('');
+            setNewCarreraTituloIntermedio('');
+            setIsAddingCarrera(false);
+        }
+    }
+
+    // Funciones para cancelar
+    const handleCancelFacultad = () => {
+        setNewNameField('');
+        setIsAddingFacultad(false);
+    };
+    const handleCancelUniversidad = () => {
+        setNewNameField('');
+        setIsAddingUniversidad(false);
+    };
+
+    const handleCancelCarrera = () => {
+        setNewCarreraNombre('');
+        setNewCarreraDuracion('');
+        setNewCarreraTituloIntermedio('');
+        setIsAddingCarrera(false);
+    }
+
 
     return (
         <div className={styles.Body}>
@@ -75,7 +192,7 @@ function Home() {
                                 <div className={styles.Universidad} >
                                     <div className={styles.UniversidadHeader}>
                                         <div>{universidad.id_Universidad === activeUni.id_Universidad ? <FaFolderOpen /> : <FaFolder />}</div>
-                                        <div onClick={() => setActiveUni(activeUni === universidad ? {} : universidad)} ><p>{universidad.nombre_Universidad}</p></div>
+                                        <div onClick={() => { setActiveUni(activeUni === universidad ? {} : universidad); setActiveFacu({}); }} ><p>{universidad.nombre_Universidad}</p></div>
                                     </div>
                                     <div className={(universidad.id_Universidad === activeUni.id_Universidad) ? styles.Facultades : styles.Inactive}>
                                         {(facultades || []).map((facultad) => (
@@ -93,7 +210,19 @@ function Home() {
                                                         ))}
                                                         {/* Crear Universidad Nueva */}
                                                         <div className={styles.Carrera} >
-                                                            <li onClick={console.log("Crear Carrera nueva")} key={-1}><span className={styles.NewCarreraSpan}>Nueva carrera</span></li>
+                                                            <li key={-1}>
+                                                                {isAddingCarrera ? (
+                                                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                                                                        <TextField size="small" placeholder="Nombre de la carrera" value={newCarreraNombre} onChange={(e) => setNewCarreraNombre(e.target.value)} />
+                                                                        <TextField size="small" type="number" placeholder="Duración (años)" value={newCarreraDuracion} onChange={(e) => setNewCarreraDuracion(e.target.value)} />
+                                                                        <TextField size="small" placeholder="Título intermedio" value={newCarreraTituloIntermedio} onChange={(e) => setNewCarreraTituloIntermedio(e.target.value)} />
+                                                                        <Button variant="contained" size="small" onClick={handleSaveCarrera}>Guardar</Button>
+                                                                        <Button variant="outlined" size="small" onClick={handleCancelCarrera}>Cancelar</Button>
+                                                                    </div>
+                                                                ) : (
+                                                                    <span onClick={() => setIsAddingCarrera(true)} className={styles.NewCarreraSpan}>Nueva carrera</span>
+                                                                )}
+                                                            </li>
                                                         </div>
                                                     </ul>
                                                 </div>
@@ -104,7 +233,22 @@ function Home() {
                                         <div className={styles.Facultad} >
                                             <div className={styles.FacultadHeader}>
                                                 <div>{<FaFolderPlus />}</div>
-                                                <div onClick={() => console.log("Crear facultad nueva")} ><p>Nueva facultad</p></div>
+                                                {isAddingFacultad ? (
+                                                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                                        <TextField
+                                                            size="small"
+                                                            placeholder="Nombre de la facultad"
+                                                            value={newNameField}
+                                                            onChange={(e) => setNewNameField(e.target.value)}
+                                                            onKeyPress={(e) => e.key === 'Enter' && handleSaveFacultad()}
+                                                            autoFocus
+                                                        />
+                                                        <Button variant="contained" size="small" onClick={handleSaveFacultad}>Guardar</Button>
+                                                        <Button variant="outlined" size="small" onClick={handleCancelFacultad}>Cancelar</Button>
+                                                    </div>
+                                                ) : (
+                                                    <div onClick={() => setIsAddingFacultad(true)} ><p>Nueva facultad</p></div>
+                                                )}
                                             </div>
                                         </div>
                                     </div>
@@ -114,7 +258,22 @@ function Home() {
                             <div className={styles.Universidad} >
                                 <div className={styles.UniversidadHeader}>
                                     <div>{<FaFolderPlus />}</div>
-                                    <div onClick={() => console.log("Crear unviersidad nueva")} ><p>Nueva universidad</p></div>
+                                    {isAddingUniversidad ? (
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                            <TextField
+                                                size="small"
+                                                placeholder="Nombre de la universidad"
+                                                value={newNameField}
+                                                onChange={(e) => setNewNameField(e.target.value)}
+                                                onKeyPress={(e) => e.key === 'Enter' && handleSaveUniversidad()}
+                                                autoFocus
+                                            />
+                                            <Button variant="contained" size="small" onClick={handleSaveUniversidad}>Guardar</Button>
+                                            <Button variant="outlined" size="small" onClick={handleCancelUniversidad}>Cancelar</Button>
+                                        </div>
+                                    ) : (
+                                        <div onClick={() => setIsAddingUniversidad(true)} ><p>Nueva universidad</p></div>
+                                    )}
                                 </div>
                             </div>
                         </div>
