@@ -3,6 +3,7 @@ import { Container, TextField, Button } from '@mui/material';
 import React from 'react'
 import axios from 'axios';
 import { FaFolder, FaFolderOpen, FaFolderPlus } from "react-icons/fa";
+import { TiDeleteOutline } from "react-icons/ti";
 import TopBar from '../Components/TopBar';
 function Home() {
     //logic
@@ -18,6 +19,7 @@ function Home() {
     const [newCarreraNombre, setNewCarreraNombre] = React.useState('');
     const [newCarreraDuracion, setNewCarreraDuracion] = React.useState('');
     const [newCarreraTituloIntermedio, setNewCarreraTituloIntermedio] = React.useState('');
+
 
 
     /******************************************************************************************/
@@ -95,7 +97,7 @@ function Home() {
     }
 
     const createFacultad = (nombreF) => {
-        axios.post(`${process.env.REACT_APP_BACKEND_URL}/facultades`, { nombreF: nombreF, universidad:activeUni }).then(response => {
+        axios.post(`${process.env.REACT_APP_BACKEND_URL}/facultades`, { nombreF: nombreF, universidad: activeUni }).then(response => {
             console.log("Facultad creada: ", response.data);
             loadFacultades();
         }).catch(error => {
@@ -103,15 +105,43 @@ function Home() {
         });
     }
 
-    const createCarrera =(carrera) => {
+    const createCarrera = (carrera) => {
         console.log("Creating carrera: ", carrera);
-        axios.post(`${process.env.REACT_APP_BACKEND_URL}/carreras`,  carrera).then(response => {
+        axios.post(`${process.env.REACT_APP_BACKEND_URL}/carreras`, carrera).then(response => {
             console.log("Carrera creada: ", response.data);
             loadCarreras();
         }).catch(error => {
             console.error('Error al crear la carrera:', error);
         });
     }
+
+    const deleteUniversidad = (id_Universidad) => {
+        axios.delete(`${process.env.REACT_APP_BACKEND_URL}/universidades/` + id_Universidad).then(response => {
+            console.log("Universidad eliminada: ", response.data);
+            loadUniversidades();
+        }).catch(error => {
+            console.error('Error al eliminar la universidad:', error);
+        });
+    }
+
+    const deleteFacultad = (id_F) => {
+        axios.delete(`${process.env.REACT_APP_BACKEND_URL}/facultades/` + id_F).then(response => {
+            console.log("Facultad eliminada: ", response.data);
+            loadFacultades();
+        }).catch(error => {
+            console.error('Error al eliminar la facultad:', error);
+        });
+    }
+
+    const deleteCarrera = (id_C) => {
+        axios.delete(`${process.env.REACT_APP_BACKEND_URL}/carreras/` + id_C).then(response => {
+            console.log("Carrera eliminada: ", response.data);
+            loadCarreras();
+        }).catch(error => {
+            console.error('Error al eliminar la carrera:', error);
+        });
+    }
+
     /******************************************************************************************/
     /*                           New Universidad/Facultad Logic                               */
     /******************************************************************************************/
@@ -137,11 +167,11 @@ function Home() {
     };
 
     const handleSaveCarrera = () => {
-        if (newCarreraNombre.trim() && newCarreraDuracion && newCarreraTituloIntermedio.trim()) {
-            const currentCarrera={
+        if (newCarreraNombre.trim() && newCarreraDuracion) {
+            const currentCarrera = {
                 nombreC: newCarreraNombre,
                 duracion: parseInt(newCarreraDuracion),
-                tituloIntermedio: newCarreraTituloIntermedio,
+                tituloIntermedio: newCarreraTituloIntermedio.trim() || null,
                 fechaInscripcion: new Date(),
                 facultad: activeFacu
             };
@@ -170,6 +200,17 @@ function Home() {
         setIsAddingCarrera(false);
     }
 
+    const handleDelete = (type, id) => {
+        if (type === 'universidad') {
+            deleteUniversidad(id);
+        } else if (type === 'facultad') {
+            deleteFacultad(id);
+        } else if (type === 'carrera') {
+            deleteCarrera(id);
+        }
+    }
+
+
 
     return (
         <div className={styles.Body}>
@@ -193,6 +234,13 @@ function Home() {
                                     <div className={styles.UniversidadHeader}>
                                         <div>{universidad.id_Universidad === activeUni.id_Universidad ? <FaFolderOpen /> : <FaFolder />}</div>
                                         <div onClick={() => { setActiveUni(activeUni === universidad ? {} : universidad); setActiveFacu({}); }} ><p>{universidad.nombre_Universidad}</p></div>
+                                        <div className={styles.DeleteButton} onClick={() => {
+                                            window.confirm(`¿Estás seguro de que deseas eliminar la universidad ${universidad.nombre_Universidad}? Esta acción no se puede deshacer.`) &&
+                                                handleDelete('universidad', universidad.id_Universidad)
+                                        }
+                                        }>
+                                            <TiDeleteOutline />
+                                        </div>
                                     </div>
                                     <div className={(universidad.id_Universidad === activeUni.id_Universidad) ? styles.Facultades : styles.Inactive}>
                                         {(facultades || []).map((facultad) => (
@@ -200,13 +248,31 @@ function Home() {
                                                 <div className={styles.FacultadHeader}>
                                                     <div>{facultad.id_F === activeFacu.id_F ? <FaFolderOpen /> : <FaFolder />}</div>
                                                     <div onClick={() => setActiveFacu(activeFacu === facultad ? {} : facultad)}><p>{facultad.nombreF}</p></div>
+                                                    <div className={styles.DeleteButton} onClick={() => {
+                                                        window.confirm(`¿Estás seguro de que deseas eliminar la facultad ${facultad.nombreF}? Esta acción no se puede deshacer.`) &&
+                                                            handleDelete('facultad', facultad.id_F)
+                                                    }
+                                                    }>
+                                                        <TiDeleteOutline />
+                                                    </div>
                                                 </div>
                                                 <div className={(facultad.id_F === activeFacu.id_F) ? styles.Carreras : styles.Inactive}>
                                                     <ul>
                                                         {(carreras || []).map((carrera) => (
                                                             <div className={styles.Carrera}>
-                                                                <li key={carrera.id_C}><a href={'/carrera/' + carrera.id_C}>{carrera.nombreC}</a></li>
+                                                                <li key={carrera.id_C}>
+                                                                    <a href={'/carrera/' + carrera.id_C}>{carrera.nombreC}</a>
+                                                                    <div className={styles.DeleteButton} onClick={() => {
+                                                                        window.confirm(`¿Estás seguro de que deseas eliminar la carrera ${carrera.nombreC}? Esta acción no se puede deshacer.`) &&
+                                                                            handleDelete('carrera', carrera.id_C)
+                                                                    }
+                                                                    }>
+                                                                        <TiDeleteOutline />
+                                                                    </div>
+                                                                </li>
                                                             </div>
+
+
                                                         ))}
                                                         {/* Crear Universidad Nueva */}
                                                         <div className={styles.Carrera} >
