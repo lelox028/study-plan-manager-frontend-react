@@ -1,8 +1,8 @@
-import styles from './dist/topBar.module.scss';
+import styles from '../dist/topBar.module.scss';
 // Import SPM Logo
-import Logo from "./dist/img/SPM_Logo_Cropped.png"
+import Logo from "../dist/img/SPM_Logo_Cropped.png"
 import { Container, Button } from '@mui/material';
-import { useAuth } from './AuthContext';
+import { useAuth } from '../AuthContext';
 import { useNavigate } from 'react-router-dom';
 
 
