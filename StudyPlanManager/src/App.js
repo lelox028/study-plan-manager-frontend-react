@@ -5,6 +5,7 @@ import Home from './Pages/Home.js';
 import Carrera from './Pages/Carrera.js';
 import Login from './Pages/Login.js';
 import Signup from './Pages/Signup.js';
+import Landing from './Pages/Landing.js';
 
 const ProtectedRoute = ({ children }) => {
   const { token } = useAuth();
@@ -17,7 +18,8 @@ const App = () => {
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
-        <Route path="/" element={<ProtectedRoute><Home /></ProtectedRoute>} />
+        <Route path="/" element={<Landing />} />
+        <Route path="/home" element={<ProtectedRoute><Home /></ProtectedRoute>} />
         <Route path="/carrera/:slug" element={<ProtectedRoute><Carrera /></ProtectedRoute>} />
       </Routes>
     </AuthProvider>
