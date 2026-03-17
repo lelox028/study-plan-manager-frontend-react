@@ -105,11 +105,11 @@ const Signup = () => {
       </div>
 
       {/* Footer Links */}
-      <div className={styles.footerLinks}>
+      {/* <div className={styles.footerLinks}>
         <a className={styles.footerLink} href="#">Términos</a>
         <a className={styles.footerLink} href="#">Privacidad</a>
         <a className={styles.footerLink} href="#">Contacto</a>
-      </div>
+      </div> */}
     </div>
   );
 };
