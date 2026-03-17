@@ -3,12 +3,12 @@ import styles from '../../dist/landing.module.scss';
 import { MdOutlineTerminal } from "react-icons/md";
 import { MdOutlineCode } from "react-icons/md";
 import demoImage from '../../dist/img/placeholder.png';
-import TopBar from "../TopBar";
+import { Navigate, useNavigate } from "react-router-dom";
 
 function Home() {
+    const navigate = useNavigate();
     return (
         <>
-            <TopBar />
             <div className={styles.home}>
                 <Container maxWidth="lg" className={styles.container}>
                     <div className={styles.leftMain}>
@@ -23,10 +23,16 @@ function Home() {
                             </p>
                         </div>
                         <div className={styles.buttons}>
-                            <Button className={styles.primaryButton}>
+                            <Button
+                                className={styles.primaryButton}
+                                onClick={() => navigate('/home')}
+                            >
                                 Empezar Ahora
                             </Button>
-                            <Button className={styles.secondaryButton}>
+                            <Button
+                                className={styles.secondaryButton}
+                                onClick={() => window.open('https://github.com/lelox028/study-plan-manager-frontend-react')}
+                            >
                                 <MdOutlineTerminal size={20} style={{ marginRight: '8px' }} />
                                 Ver en github
                             </Button>
