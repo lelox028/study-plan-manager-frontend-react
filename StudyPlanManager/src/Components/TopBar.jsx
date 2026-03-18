@@ -1,12 +1,10 @@
 import styles from '../dist/topBar.module.scss';
-// Import SPM Logo
-import Logo from "../dist/img/SPM_Logo_Cropped.png"
-import { Container, Button } from '@mui/material';
+import { MdAccountTree } from "react-icons/md";
 import { useAuth } from '../AuthContext';
 import { useNavigate } from 'react-router-dom';
+import { Container } from '@mui/material';
 
-
-function TopBar() {
+function TopBar({ user }) {
     const { logout } = useAuth();
     const navigate = useNavigate();
 
@@ -16,20 +14,34 @@ function TopBar() {
     };
 
     return (
-        <div className={styles.TopBar}>
-            <div className={styles.TopBarContainer}>
+        <header className={styles.TopBar}>
+            <Container maxWidth="lg" className={styles.Container}>
                 <div className={styles.Left}>
-                    <a href='/'>
-                        <img src={Logo} alt="SPM Logo" className={styles.Logo} />
-                    </a>                    </div>
-                <div className={styles.Right}>
-                    <Button onClick={handleLogout} variant="outlined" color="inherit">
-                        Logout
-                    </Button>
+                    <div className={styles.LogoContainer} onClick={() => navigate('/')}>
+                        <div className={styles.LogoBox}>
+                            <MdAccountTree className={styles.Logo} />
+                        </div>
+                        <h2 className={styles.Title}>Study Plan Manager</h2>
+                    </div>
                 </div>
-            </div>
-        </div>
-    )
+                <div className={styles.Right}>
+                    <div className={styles.UserInfo}>
+                        <div className={styles.Text}>
+                            <p className={styles.Username}>{user ? user.username : 'Invitado'}</p>
+                            <p className={styles.Email}>{user ? user.email : ''}</p>
+                        </div>
+                    </div>
+                    <button className={styles.LogoutBtn} onClick={handleLogout}>
+                        <span className={styles.LogoutIcon}>
+                            {/* Puedes usar otro icono si prefieres material-symbols-outlined */}
+                            <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>logout</span>
+                        </span>
+                        <span>Cerrar sesión</span>
+                    </button>
+                </div>
+            </Container>
+        </header>
+    );
 }
 
 export default TopBar;

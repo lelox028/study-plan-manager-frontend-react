@@ -1,6 +1,8 @@
 import styles from '../dist/home.module.scss';
 import { Container, TextField, Button } from '@mui/material';
-import React from 'react'
+import { useAuth } from '../AuthContext';
+import React from 'react';
+import { AuthProvider } from '../AuthContext';
 import axios from 'axios';
 import { FaFolder, FaFolderOpen, FaFolderPlus } from "react-icons/fa";
 import { TiDeleteOutline } from "react-icons/ti";
@@ -210,11 +212,12 @@ function Home() {
         }
     }
 
-
+    // Obtener User desde el contexto de autenticación
+    const { user } = useAuth();
 
     return (
         <div className={styles.Body}>
-            <TopBar />
+            <TopBar user={user} />
             <Container maxWidth='lg'>
                 <div className={styles.Main}>
                     <div className={styles.Title}>
