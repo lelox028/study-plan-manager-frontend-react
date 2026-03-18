@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import styles from '../dist/login.module.scss';
 import { useAuth } from '../AuthContext';
 import { useNavigate } from 'react-router-dom';
+import { MdAccountTree } from "react-icons/md";
 
 const Signup = () => {
   const [username, setUsername] = useState('');
@@ -25,9 +26,7 @@ const Signup = () => {
       {/* Top Branding */}
       <div className={styles.branding}>
         <div className={styles.brandingIcon}>
-          <svg className={styles.icon} fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
-            <path d="M4 4H17.3334V17.3334H30.6666V30.6666H44V44H4V4Z" fill="currentColor"></path>
-          </svg>
+          <MdAccountTree className={styles.icon} />
         </div>
         <h2 className={styles.brandingTitle}>Study Plan Manager</h2>
       </div>
