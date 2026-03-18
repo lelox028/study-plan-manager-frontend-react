@@ -17,7 +17,7 @@ function TopBar({ user }) {
         <header className={styles.TopBar}>
             <Container maxWidth="lg" className={styles.Container}>
                 <div className={styles.Left}>
-                    <div className={styles.LogoContainer} onClick={() => navigate('/')}>
+                    <div className={styles.LogoContainer} onClick={() => navigate('/home')}>
                         <div className={styles.LogoBox}>
                             <MdAccountTree className={styles.Logo} />
                         </div>
