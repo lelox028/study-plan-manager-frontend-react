@@ -1,20 +1,129 @@
-@import url('https://fonts.googleapis.com/css2?family=Cutive&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap');
 
-$bg-light: #0f1823;
-/* Soft beige */
-$bg-dark: #0d1219;
-/* Warm cream */
+/* ===== DARK MODE ONLY ===== */
+
+/* Background Colors */
+$bg-dark: #101822;
+$bg-surface: #1a1f2e;
+$bg-surface-secondary: #242d3d;
+$bg-light: #1a1f2e; /* Alias for bg-surface in dark mode */
 
 /* Foreground (Text) Colors */
-$fg-primary: #1c2027;
-
-$fg-secondary: #3d444d;
-
-$text-primary: #ffffff;
-$text-secondary: #94a3b8;
+$text-primary: #e2e8f0;
+$text-secondary: #cbd5e1;
+$text-muted: #94a3b8;
+$text-subtle: #64748b;
+$fg-primary: #e2e8f0; /* Alias for text-primary */
 
 /* Accent Color */
 $accent: #136dec;
-$accent-bg: #102036;
+$accent-light: #1d7fe8;
+$accent-bg: rgba(19, 109, 236, 0.1);
+$accent-border: rgba(19, 109, 236, 0.2);
 
-$font-family-text: "Lexend", "sans-serif";
+/* Border & Surface Colors */
+$border-color: #2a3140;
+$border-subtle: rgba(148, 163, 184, 0.1);
+$hover-bg: rgba(148, 163, 184, 0.08);
+$hover-bg-strong: rgba(148, 163, 184, 0.12);
+
+/* Semantic Colors */
+$error-color: #ef4444;
+$error-bg: rgba(239, 68, 68, 0.1);
+$success-color: #10b981;
+$success-bg: rgba(16, 185, 129, 0.1);
+$warning-color: #f59e0b;
+$warning-bg: rgba(245, 158, 11, 0.1);
+
+/* Typography */
+$font-family-text: "Lexend", sans-serif;
+$font-size-xs: 12px;
+$font-size-sm: 14px;
+$font-size-base: 16px;
+$font-size-lg: 18px;
+$font-size-xl: 20px;
+$font-size-2xl: 24px;
+$font-size-3xl: 30px;
+$font-size-4xl: 36px;
+
+$font-weight-light: 300;
+$font-weight-normal: 400;
+$font-weight-medium: 500;
+$font-weight-semibold: 600;
+$font-weight-bold: 700;
+$font-weight-black: 900;
+
+/* Spacing */
+$spacing-xs: 4px;
+$spacing-sm: 8px;
+$spacing-md: 12px;
+$spacing-lg: 16px;
+$spacing-xl: 24px;
+$spacing-2xl: 32px;
+$spacing-3xl: 48px;
+
+/* Border Radius */
+$radius-sm: 4px;
+$radius-md: 8px;
+$radius-lg: 12px;
+$radius-xl: 16px;
+$radius-full: 9999px;
+
+/* Shadows */
+$shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05), 0 1px 6px rgba(0, 0, 0, 0.1);
+$shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07), 0 10px 13px rgba(0, 0, 0, 0.1);
+$shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1), 0 4px 6px rgba(0, 0, 0, 0.05);
+$shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.1), 0 8px 16px rgba(0, 0, 0, 0.08);
+
+/* Transitions */
+$transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+$transition-base: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+$transition-slow: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+
+/* Faculty/Career Card Colors (deterministic by name hash) */
+@function getFacultyColor($index) {
+  @if $index == 0 {
+    @return #136dec;
+  } @else if $index == 1 {
+    @return #f59e0b;
+  } @else if $index == 2 {
+    @return #10b981;
+  } @else if $index == 3 {
+    @return #8b5cf6;
+  } @else if $index == 4 {
+    @return #ec4899;
+  } @else if $index == 5 {
+    @return #06b6d4;
+  } @else {
+    @return #94a3b8;
+  }
+}
+
+/* Mixin for card styling */
+@mixin card-base {
+  background-color: $bg-surface;
+  border: 1px solid $border-color;
+  border-radius: $radius-lg;
+  transition: all $transition-base;
+}
+
+@mixin card-hover {
+  &:hover {
+    border-color: $accent;
+    box-shadow: $shadow-lg;
+  }
+}
+
+/* Mixin for truncate text */
+@mixin truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Mixin for flex center */
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

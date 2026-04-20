@@ -149,7 +149,7 @@ $border: #282f39;
                     transition: all 0.3s ease;
 
                     &:hover {
-                        background-color: #f1f5f9;
+                        background-color: rgba($accent, 0.15);
                     }
 
                     span {
@@ -271,7 +271,7 @@ $border: #282f39;
                 gap: 1.25rem;
                 border-radius: 1rem;
                 border: 1px solid $border;
-                background-color: $fg-primary;
+                background-color: $bg-surface;
                 padding: 2rem;
                 flex-direction: column;
                 transition: border-color 0.3s ease;
@@ -362,12 +362,11 @@ $border: #282f39;
         border-radius: 1.5rem;
         background-color: $accent;
         padding: 2rem;
+        text-align: center;
 
         @media (min-width: 768px) {
             padding: 6rem;
         }
-
-        text-align: center;
     }
 
     .blurEffectTop {
@@ -459,7 +458,7 @@ $border: #282f39;
                 transition: all 0.3s ease;
 
                 &:hover {
-                    background-color: #f1f5f9;
+                    background-color: rgba($accent, 0.15);
                     transform: scale(1.02);
                 }
 
@@ -478,14 +477,9 @@ $border: #282f39;
     align-items: center;
     justify-content: space-between;
     white-space: nowrap;
-    border-bottom: 1px solid #cbd5e1;
+    border-bottom: 1px solid #282f39;
     padding: 1rem 1.5rem;
-    background-color: #ffffff;
-
-    @media (prefers-color-scheme: dark) {
-        border-bottom-color: #282f39;
-        background-color: #1a1f2e;
-    }
+    background-color: $bg-dark;
 
     .headerContent {
         display: flex;

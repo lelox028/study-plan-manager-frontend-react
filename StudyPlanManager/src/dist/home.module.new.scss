@@ -128,10 +128,6 @@
     .SideBarAddButton {
       opacity: 1;
     }
-
-    .SideBarDeleteButton {
-      opacity: 1;
-    }
   }
 }
 
@@ -156,26 +152,6 @@
 
   &:active {
     opacity: 1;
-  }
-}
-
-.SideBarDeleteButton {
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  opacity: 0;
-  transition: opacity $transition-base, color $transition-base;
-  color: $text-secondary;
-  flex-shrink: 0;
-  width: 24px;
-  height: 24px;
-
-  &:hover {
-    color: $error-color;
   }
 }
 
@@ -407,28 +383,24 @@
 
 .Grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-  gap: $spacing-2xl;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: $spacing-xl;
   margin-top: $spacing-xl;
 
   @media (max-width: 640px) {
     grid-template-columns: 1fr;
-    gap: $spacing-lg;
   }
 
   @media (min-width: 640px) and (max-width: 1024px) {
     grid-template-columns: repeat(2, 1fr);
-    gap: $spacing-xl;
   }
 
   @media (min-width: 1024px) and (max-width: 1440px) {
     grid-template-columns: repeat(3, 1fr);
-    gap: $spacing-xl;
   }
 
   @media (min-width: 1440px) {
     grid-template-columns: repeat(4, 1fr);
-    gap: $spacing-2xl;
   }
 }
 
@@ -441,7 +413,6 @@
   flex-direction: column;
   overflow: hidden;
   cursor: pointer;
-  width: 14em;
 
   &.active {
     border-color: $accent;
@@ -449,7 +420,7 @@
 }
 
 .CardHeader {
-  height: 140px;
+  height: 128px;
   background-color: $accent;
   background-size: cover;
   background-position: center;
@@ -468,8 +439,8 @@
   /* Header actions (edit/delete) */
   .CardActions {
     position: absolute;
-    top: $spacing-lg;
-    right: $spacing-lg;
+    top: $spacing-md;
+    right: $spacing-md;
     display: flex;
     gap: $spacing-md;
     opacity: 0;
@@ -485,10 +456,10 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 36px;
-  height: 36px;
-  background-color: $bg-surface;
-  border: 1px solid $border-color;
+  width: 32px;
+  height: 32px;
+  background-color: rgba(255, 255, 255, 0.9);
+  border: none;
   border-radius: $radius-md;
   cursor: pointer;
   transition: all $transition-base;
@@ -496,17 +467,12 @@
   backdrop-filter: blur(4px);
 
   &:hover {
-    color: white;
-    background-color: $accent;
-    border-color: $accent;
-    box-shadow: 0 0 12px rgba($accent, 0.3);
+    color: $accent;
+    background-color: white;
   }
 
   &.delete:hover {
-    color: white;
-    background-color: $error-color;
-    border-color: $error-color;
-    box-shadow: 0 0 12px rgba($error-color, 0.3);
+    color: $error-color;
   }
 
   .material-symbols-outlined {
@@ -515,10 +481,10 @@
 }
 
 .CardBody {
-  padding: $spacing-2xl $spacing-xl;
+  padding: $spacing-xl;
   display: flex;
   flex-direction: column;
-  gap: $spacing-lg;
+  gap: $spacing-md;
   flex: 1;
 }
 
@@ -527,10 +493,7 @@
   font-weight: $font-weight-bold;
   color: $text-primary;
   margin: 0;
-  line-height: 1.4;
-  word-wrap: break-word;
-  overflow-wrap: break-word;
-  hyphens: auto;
+  @include truncate;
 }
 
 .CardSubtitle {
@@ -542,7 +505,7 @@
 .CardContent {
   display: flex;
   flex-direction: column;
-  gap: $spacing-md;
+  gap: $spacing-sm;
   flex: 1;
 
   p {
@@ -554,20 +517,12 @@
     &.meta {
       display: flex;
       align-items: center;
-      gap: $spacing-md;
+      gap: $spacing-sm;
       color: $text-muted;
       font-size: $font-size-xs;
-      font-weight: $font-weight-medium;
 
       .material-symbols-outlined {
-        font-size: 18px;
-        color: $accent;
-        flex-shrink: 0;
-      }
-
-      span {
-        flex: 1;
-        word-wrap: break-word;
+        font-size: 16px;
       }
     }
   }
@@ -575,48 +530,11 @@
 
 .CardFooter {
   display: flex;
-  flex-direction: column;
-  gap: $spacing-md;
-  padding: $spacing-lg $spacing-xl;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: $spacing-lg;
   border-top: 1px solid $border-color;
 
-  .CompletionInfo {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: $spacing-md;
-
-    .Label {
-      font-size: $font-size-xs;
-      font-weight: $font-weight-medium;
-      color: $text-muted;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-    }
-
-    .Percentage {
-      font-size: $font-size-base;
-      font-weight: $font-weight-bold;
-      color: $accent;
-    }
-  }
-
-  .ProgressBar {
-    width: 100%;
-    height: 6px;
-    background-color: $bg-surface;
-    border-radius: $radius-full;
-    overflow: hidden;
-
-    .Progress {
-      height: 100%;
-      background: linear-gradient(90deg, $accent, $accent-light);
-      border-radius: $radius-full;
-      transition: width 300ms ease;
-    }
-  }
-
-  /* Legacy styles for faculty cards */
   .FooterLeft {
     display: flex;
     align-items: center;
@@ -641,6 +559,10 @@
       transition: color $transition-base;
     }
   }
+
+  &:hover .FooterRight .material-symbols-outlined {
+    color: $accent;
+  }
 }
 
 /* ===== ADD CARD SPECIAL ===== */
@@ -657,7 +579,6 @@
   border: 2px dashed $border-color;
   background-color: transparent;
   cursor: pointer;
-  width: 14em;
 
   &:hover {
     border-color: $accent;
@@ -714,105 +635,6 @@
 .FormInput {
   flex: 1;
   min-width: 200px;
-}
-
-/* ===== CARD FORM STYLES (for editing/creating inside cards) ===== */
-
-.CardFormGroup {
-  display: flex;
-  flex-direction: column;
-  gap: $spacing-md;
-  width: 100%;
-
-  & > :global(.MuiOutlinedInput-root) {
-    background-color: $bg-dark;
-    border-color: $border-color;
-
-    &:hover {
-      border-color: $border-subtle;
-    }
-
-    &.Mui-focused {
-      border-color: $accent;
-
-      & fieldset {
-        border-color: $accent !important;
-      }
-    }
-
-    & fieldset {
-      border-color: $border-color;
-    }
-
-    & input {
-      color: $text-primary;
-      font-size: $font-size-sm;
-      padding: $spacing-md $spacing-lg;
-
-      &::placeholder {
-        color: $text-muted;
-        opacity: 0.7;
-      }
-    }
-
-    & textarea {
-      color: $text-primary;
-      font-size: $font-size-sm;
-      padding: $spacing-md $spacing-lg;
-
-      &::placeholder {
-        color: $text-muted;
-        opacity: 0.7;
-      }
-    }
-  }
-
-  /* Dark theme for MUI TextField */
-  :global(.MuiInputBase-input) {
-    color: $text-primary !important;
-  }
-
-  :global(.MuiInputBase-input::placeholder) {
-    color: $text-muted !important;
-    opacity: 0.7 !important;
-  }
-
-  :global(.MuiOutlinedInput-input) {
-    padding: $spacing-md $spacing-lg;
-  }
-}
-
-.CardFormActions {
-  display: flex;
-  gap: $spacing-md;
-  margin-top: $spacing-lg;
-  justify-content: flex-end;
-
-  :global(.MuiButton-root) {
-    font-size: $font-size-xs;
-    text-transform: uppercase;
-    font-weight: $font-weight-bold;
-    letter-spacing: 0.05em;
-  }
-
-  :global(.MuiButton-contained) {
-    background-color: $accent;
-    color: white;
-
-    &:hover {
-      background-color: $accent-light;
-    }
-  }
-
-  :global(.MuiButton-outlined) {
-    color: $text-secondary;
-    border-color: $border-color;
-
-    &:hover {
-      background-color: transparent;
-      border-color: $text-secondary;
-    }
-  }
 }
 
 /* ===== UTILITY CLASSES ===== */
