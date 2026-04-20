@@ -41,8 +41,8 @@ function Home() {
       .then((response) => {
         const universidadesData = response.data || [];
         setUniversidades(universidadesData);
-        setActiveUni(universidadesData.find((u) => u.id_Universidad === activeUni?.id_Universidad) || null);
-        setActiveFacu(universidadesData.find((u) => u.id_Universidad === activeUni?.id_Universidad)?.facultades?.find((f) => f.id_F === activeFacu?.id_F) || null);
+        activeUni && setActiveUni(universidadesData.find((u) => u.id_Universidad === activeUni?.id_Universidad) || null);
+        activeFacu && setActiveFacu(universidadesData.find((u) => u.id_Universidad === activeUni?.id_Universidad)?.facultades?.find((f) => f.id_F === activeFacu?.id_F) || null);
         console.log('Updated active university and faculty based on latest data', activeUni, activeFacu);
       })
       .catch((error) => {
@@ -243,17 +243,9 @@ function Home() {
     return colors[(index || 0) % colors.length];
   };
 
-  const formatDate = (dateString) => {
-    if (!dateString) return '';
-    const date = new Date(dateString);
-    const year = date.getFullYear();
-    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-    const month = months[date.getMonth()];
-    return `${month} ${year}`;
-  };
-
   /* ===== USE EFFECTS ===== */
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   React.useEffect(() => {
     loadUniversidades();
   }, []);
